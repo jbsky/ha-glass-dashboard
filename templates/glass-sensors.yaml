@@ -1,0 +1,63 @@
+# Glass Dashboard - Sensor Display Templates
+# Templates for battery, humidity, temperature, door sensors
+
+{
+  "battery_level": {
+    "template": "icon_tiny"
+  },
+  "humidity_template": {
+    "template": "icon_tiny",
+    "state": [
+      {
+        "value": 15,
+        "operator": "<=",
+        "color": "red",
+        "icon": "mdi:water-percent-alert"
+      },
+      {
+        "operator": "default",
+        "color": "blue",
+        "icon": "mdi:water-percent",
+        "styles": {
+          "card": [
+            {
+              "opacity": 0.5
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "temperature_template": {
+    "template": "icon_tiny",
+    "state": [
+      {
+        "value": 20,
+        "operator": "<=",
+        "color": "blue",
+        "icon": "mdi:thermometer-minus"
+      },
+      {
+        "value": 25,
+        "operator": ">=",
+        "color": "red",
+        "icon": "mdi:thermometer-plus"
+      },
+      {
+        "operator": "default",
+        "color": "orange",
+        "icon": "mdi:thermometer",
+        "styles": {
+          "card": [
+            {
+              "opacity": 0.5
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "door_template": {
+    "template": "icon_tiny"
+  }
+}

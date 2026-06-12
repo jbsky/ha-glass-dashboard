@@ -1,0 +1,248 @@
+# Glass Dashboard - Device-specific Templates (Examples)
+# Customize these for your own devices
+
+{
+  "state_lave_linge": {
+    "state": [
+      {
+        "value": "run",
+        "icon": "mdi:washing-machine",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #00897B, #4DB6AC)"
+            },
+            {
+              "border-left": "3px solid #00695C"
+            },
+            {
+              "animation": "pulse-wash 1.5s ease-in-out infinite"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFFFFF"
+            },
+            {
+              "filter": "drop-shadow(0 0 5px rgba(0, 137, 123, 0.8))"
+            }
+          ]
+        }
+      },
+      {
+        "value": "stop",
+        "icon": "mdi:washing-machine-off",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #546E7A, #90A4AE)"
+            },
+            {
+              "border-left": "3px solid #37474F"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#CFD8DC"
+            },
+            {
+              "opacity": 0.8
+            }
+          ]
+        }
+      },
+      {
+        "operator": "default",
+        "icon": "mdi:washing-machine-off",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #546E7A, #90A4AE)"
+            },
+            {
+              "border-left": "3px solid #37474F"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#CFD8DC"
+            },
+            {
+              "opacity": 0.8
+            }
+          ]
+        }
+      }
+    ],
+    "extra_styles": "\n        @keyframes pulse-wash {\n            0%, 100% { box-shadow: 0 0 10px 2px rgba(0, 137, 123, 0.4); }\n            50% { box-shadow: 0 0 16px 4px rgba(77, 182, 172, 0.7); }\n        }\n    "
+  },
+  "state_pompe": {
+    "state": [
+      {
+        "value": "on",
+        "icon": "mdi:pump",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #0288D1, #4FC3F7)"
+            },
+            {
+              "border-left": "3px solid #01579B"
+            },
+            {
+              "animation": "pulse-water 2s ease-in-out infinite"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFFFFF"
+            },
+            {
+              "filter": "drop-shadow(0 0 6px rgba(2, 136, 209, 0.8))"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off",
+        "icon": "mdi:pump-off",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #546E7A, #90A4AE)"
+            },
+            {
+              "border-left": "3px solid #37474F"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#CFD8DC"
+            },
+            {
+              "opacity": 0.8
+            },
+            {
+              "filter": "grayscale(80%)"
+            }
+          ]
+        }
+      }
+    ],
+    "extra_styles": "\n        @keyframes pulse-water {\n            0%, 100% { box-shadow: 0 0 10px 2px rgba(2, 136, 209, 0.4); }\n            50% { box-shadow: 0 0 18px 5px rgba(79, 195, 247, 0.7); }\n        }\n    "
+  },
+  "state_prise_lave_linge": {
+    "state": [
+      {
+        "value": "on",
+        "icon": "mdi:power-plug",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #43A047, #81C784)"
+            },
+            {
+              "border-left": "3px solid #2E7D32"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFFFFF"
+            },
+            {
+              "filter": "drop-shadow(0 0 4px rgba(46, 125, 50, 0.6))"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off",
+        "icon": "mdi:power-plug-off",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #546E7A, #90A4AE)"
+            },
+            {
+              "border-left": "3px solid #37474F"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#CFD8DC"
+            },
+            {
+              "opacity": 0.8
+            },
+            {
+              "filter": "grayscale(80%)"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "state_sonnette": {
+    "state": [
+      {
+        "value": "on",
+        "icon": "mdi:bell-ring",
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #fabe07, #fcf525)"
+            },
+            {
+              "border-left": "3px solid #fcc725"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFFFFF"
+            },
+            {
+              "filter": "drop-shadow(0 0 4px rgba(46, 125, 50, 0.5))"
+            },
+            {
+              "transform": "scale(1.1) rotate(0deg)"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off",
+        "icon": "mdi:bell-cancel",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "linear-gradient(135deg, #9E9E9E, #E0E0E0)"
+            },
+            {
+              "border-left": "3px solid #616161"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#424242"
+            },
+            {
+              "opacity": 0.9
+            },
+            {
+              "filter": "grayscale(100%)"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "badge_pompe": {
+    "template": [
+      "state_pompe",
+      "badge_base"
+    ]
+  }
+}

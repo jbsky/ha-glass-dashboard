@@ -1,0 +1,1702 @@
+# Glass Dashboard - Core Button Card Templates
+# Add these to your button_card_templates in your lovelace config
+# or use the dashboard package (see README)
+
+{
+  "glass_button_base": {
+    "styles": {
+      "card": [
+        {
+          "display": "flex"
+        },
+        {
+          "flex-direction": "column"
+        },
+        {
+          "align-items": "center"
+        },
+        {
+          "justify-content": "center"
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ],
+      "icon": [
+        {
+          "transition": "transform 0.2s ease, filter 0.3s ease"
+        },
+        {
+          "transform": "scale(0.7)"
+        }
+      ]
+    }
+  },
+  "glass_button": {
+    "size": "80%",
+    "template": "state_on_off",
+    "hold_action": {
+      "action": "more-info"
+    },
+    "styles": {
+      "card": [
+        {
+          "padding": "0.2em"
+        },
+        {
+          "--mdc-ripple-color": "#44729E"
+        },
+        {
+          "--mdc-ripple-press-opacity": 0.5
+        },
+        {
+          "color": "var(--primary-text-color, #FFFFFF)"
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ],
+      "name": [
+        {
+          "font-size": "0.65em"
+        },
+        {
+          "white-space": "normal"
+        }
+      ],
+      "icon": [],
+      "state": [
+        {
+          "font-size": "0.65em"
+        },
+        {
+          "white-space": "normal"
+        }
+      ],
+      "label": [
+        {
+          "font-size": "0.4em"
+        },
+        {
+          "white-space": "normal"
+        }
+      ]
+    }
+  },
+  "glass_container": {
+    "styles": {
+      "card": [
+        {
+          "padding": 0
+        },
+        {
+          "border-radius": "12px"
+        }
+      ],
+      "name": [
+        {
+          "border-radius": "0.4em 0.4em 0 0"
+        },
+        {
+          "padding": "0.1em"
+        },
+        {
+          "width": "100%"
+        },
+        {
+          "font-weight": "bold"
+        }
+      ],
+      "grid": [
+        {
+          "grid-template-areas": "\"i\" \"n\" \"buttons\""
+        },
+        {
+          "grid-template-columns": "1fr"
+        },
+        {
+          "grid-template-rows": "1fr min-content min-content"
+        }
+      ],
+      "custom_fields": {
+        "buttons": [
+          {
+            "margin": 0
+          },
+          {
+            "padding": "0.3em"
+          }
+        ]
+      }
+    }
+  },
+  "glass_climate": {
+    "template": "glass_container",
+    "triggers_update": "[[[ return variables.climate_entity; ]]]",
+    "custom_fields": {
+      "power": {
+        "card": {
+          "size": "50%",
+          "hold_action": {
+            "action": "more-info"
+          },
+          "double_tap_action": {
+            "action": "toggle"
+          },
+          "tap_action": {
+            "action": "none"
+          },
+          "show_name": false,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": true,
+          "type": "custom:button-card",
+          "template": null,
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "entity": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "width": "60px"
+              },
+              {
+                "border": "none !important"
+              },
+              {
+                "background": "transparent !important"
+              },
+              {
+                "--ha-card-background": "transparent"
+              },
+              {
+                "backdrop-filter": "none !important"
+              },
+              {
+                "-webkit-backdrop-filter": "none !important"
+              },
+              {
+                "box-shadow": "none !important"
+              }
+            ]
+          }
+        }
+      },
+      "title": {
+        "card": {
+          "size": "50%",
+          "hold_action": {
+            "action": "more-info"
+          },
+          "double_tap_action": {
+            "action": "toggle"
+          },
+          "tap_action": {
+            "action": "none"
+          },
+          "show_name": true,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": false,
+          "type": "custom:button-card",
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "entity": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "name": "[[[\n      return states[variables.climate_entity].attributes.friendly_name;\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "border": "none !important"
+              },
+              {
+                "background": "transparent !important"
+              },
+              {
+                "--ha-card-background": "transparent"
+              },
+              {
+                "backdrop-filter": "none !important"
+              },
+              {
+                "-webkit-backdrop-filter": "none !important"
+              },
+              {
+                "box-shadow": "none !important"
+              }
+            ],
+            "name": [
+              {
+                "font-size": "1.1em"
+              },
+              {
+                "align-self": "flex-end"
+              },
+              {
+                "font-weight": "bold"
+              },
+              {
+                "color": "#FFFFFF"
+              }
+            ]
+          }
+        }
+      },
+      "statut": {
+        "card": {
+          "hold_action": {
+            "action": "more-info"
+          },
+          "double_tap_action": {
+            "action": "toggle"
+          },
+          "tap_action": {
+            "action": "none"
+          },
+          "show_name": true,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": false,
+          "type": "custom:button-card",
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "entity": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "name": "[[[\n    switch(states[variables.climate_entity].state){\n      case \"heat\": \n      return \"chauffage - \" + states[variables.climate_entity].attributes.current_temperature;\n      break;\n      case \"cool\":\n          return \"climatisation - \"+ states[variables.climate_entity].attributes.current_temperature;\n      break;\n      case \"off\": \n          return \"éteint - \" + states[variables.climate_entity].attributes.current_temperature;\n      break;\n    }\n    return states[variables.climate_entity].state;\n\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "border": "none !important"
+              },
+              {
+                "background": "transparent !important"
+              },
+              {
+                "--ha-card-background": "transparent"
+              },
+              {
+                "backdrop-filter": "none !important"
+              },
+              {
+                "-webkit-backdrop-filter": "none !important"
+              },
+              {
+                "box-shadow": "none !important"
+              }
+            ],
+            "name": [
+              {
+                "font-size": "0.7em"
+              },
+              {
+                "align-self": "flex-end"
+              },
+              {
+                "color": "rgba(255, 255, 255, 0.7)"
+              }
+            ]
+          }
+        }
+      },
+      "up": {
+        "card": {
+          "template": "icon_tiny",
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "tap_action": {
+            "action": "call-service",
+            "service": "climate.set_temperature",
+            "target": {
+              "entity_id": "[[[\n    return variables.climate_entity;\n]]]\n"
+            },
+            "service_data": {
+              "temperature": "[[[\n      let max_temp = states[variables.climate_entity].attributes.max_temp;\n      let currentTemp = states[variables.climate_entity].attributes.temperature;\n      let step = states[variables.climate_entity].attributes.target_temp_step;\n      let newTemp = currentTemp + step;\n\n      if (newTemp <= max_temp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
+            }
+          },
+          "show_name": false,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": true,
+          "icon": "mdi:plus",
+          "type": "custom:button-card"
+        }
+      },
+      "current": {
+        "card": {
+          "size": "50%",
+          "hold_action": {
+            "action": "more-info"
+          },
+          "double_tap_action": {
+            "action": "more-info"
+          },
+          "tap_action": {
+            "action": "more-info"
+          },
+          "show_name": true,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": false,
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "name": "[[[ return states[variables.climate_entity].attributes.temperature ; ]]]\n",
+          "type": "custom:button-card",
+          "entity": "[[[\n        return variables.climate_entity;\n]]]\n",
+          "styles": {
+            "icon": null,
+            "card": [
+              {
+                "--mdc-ripple-color": "#44729E"
+              },
+              {
+                "--mdc-ripple-press-opacity": 1
+              },
+              {
+                "width": "40px"
+              },
+              {
+                "height": "40px"
+              },
+              {
+                "padding": 0
+              },
+              {
+                "margin": 0
+              },
+              {
+                "--mdc-icon-button-size": "24px"
+              },
+              {
+                "background": "transparent !important"
+              },
+              {
+                "border": "none !important"
+              },
+              {
+                "border-radius": "50%"
+              },
+              {
+                "--ha-card-background": "transparent"
+              },
+              {
+                "backdrop-filter": "none !important"
+              },
+              {
+                "-webkit-backdrop-filter": "none !important"
+              },
+              {
+                "box-shadow": "none !important"
+              }
+            ],
+            "name": [
+              {
+                "font-size": "0.9em"
+              },
+              {
+                "color": "#FFFFFF"
+              }
+            ]
+          }
+        }
+      },
+      "down": {
+        "card": {
+          "template": "icon_tiny",
+          "hold_action": {
+            "action": "more-info"
+          },
+          "double_tap_action": {
+            "action": "more-info"
+          },
+          "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
+          "tap_action": {
+            "action": "call-service",
+            "service": "climate.set_temperature",
+            "target": {
+              "entity_id": "[[[\n    return variables.climate_entity;\n]]]\n"
+            },
+            "service_data": {
+              "temperature": "[[[\n      let min_temp = states[variables.climate_entity].attributes.min_temp;\n      let currentTemp = states[variables.climate_entity].attributes.temperature;\n      let step = states[variables.climate_entity].attributes.target_temp_step;\n      let newTemp = currentTemp - step;\n\n      if (min_temp <= newTemp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
+            }
+          },
+          "show_name": false,
+          "show_state": false,
+          "show_value": false,
+          "show_icon": true,
+          "icon": "mdi:minus",
+          "type": "custom:button-card"
+        }
+      },
+      "sensor0": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "icon_tiny",
+          "color": "#039be5",
+          "triggers_update": "[[[\n    return variables.secondary_sensors[0];\n]]]\n",
+          "icon": "[[[\n  if (states[variables.secondary_sensors[0]].state == 'night')  return \"mdi:fan\"\n  if (states[variables.secondary_sensors[0]].state == 'level1') return \"mdi:fan-off\"\n  if (states[variables.secondary_sensors[0]].state == 'level2') return \"mdi:fan-speed-1\"\n  if (states[variables.secondary_sensors[0]].state == 'level3') return \"mdi:fan-speed-2\"\n  if (states[variables.secondary_sensors[0]].state == 'level4') return \"mdi:fan-speed-3\"\n  if (states[variables.secondary_sensors[0]].state == 'level5') return \"mdi:fan-plus\"\n  return \"mdi:fan-question\" // Icône par défaut si aucune condition n'est satisfaite\n]]]\n",
+          "entity": "[[[ \n  if (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]]) \n    return variables.secondary_sensors[0];\n  return ''; \n]]]\n",
+          "value": "[[[\n  return states[variables.secondary_sensors[0]].state;\n]]]\n",
+          "state": [
+            {
+              "value": "night",
+              "name": "Mode Nuit"
+            },
+            {
+              "value": "level1",
+              "name": "Arrêt"
+            },
+            {
+              "value": "level2",
+              "name": "Vitesse 1"
+            },
+            {
+              "value": "level3",
+              "name": "Vitesse 2"
+            },
+            {
+              "value": "level4",
+              "name": "Vitesse 3"
+            },
+            {
+              "value": "level5",
+              "name": "Turbo"
+            }
+          ]
+        }
+      },
+      "sensor1": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "icon_tiny",
+          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state) \n        return variables.secondary_sensors[1];\n      return ''; \n]]]\n"
+        }
+      },
+      "sensor2": {
+        "card": {
+          "size": "140%",
+          "type": "custom:button-card",
+          "template": "style_none",
+          "show_icon": false,
+          "show_state": true,
+          "show_name": false,
+          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state) \n        return variables.secondary_sensors[2];\n      return ''; \n]]]\n",
+          "styles": {
+            "state": [
+              {
+                "font-size": "9px"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "styles": {
+      "custom_fields": {
+        "power": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "-1%"
+          }
+        ],
+        "up": [
+          {
+            "position": "absolute"
+          },
+          {
+            "right": "0%"
+          }
+        ],
+        "current": [
+          {
+            "position": "absolute"
+          },
+          {
+            "right": "7%"
+          }
+        ],
+        "down": [
+          {
+            "position": "absolute"
+          },
+          {
+            "right": "20%"
+          }
+        ],
+        "title": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "50px"
+          },
+          {
+            "top": "5%;"
+          }
+        ],
+        "statut": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "50px"
+          },
+          {
+            "top": "50%;"
+          }
+        ],
+        "sensor0": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "45%;"
+          }
+        ],
+        "sensor1": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "52%;"
+          }
+        ],
+        "sensor2": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "59%;"
+          }
+        ]
+      }
+    },
+    "aspect_ratio": "20/3"
+  },
+  "glass_cover": {
+    "variables": {
+      "accent_open": "#42A5F5",
+      "accent_closed": "#546E7A",
+      "accent_moving": "#7E57C2"
+    },
+    "show_name": true,
+    "show_state": false,
+    "show_icon": true,
+    "tap_action": {
+      "action": "toggle"
+    },
+    "hold_action": {
+      "action": "more-info"
+    },
+    "icon": "[[[\n  const pos = entity.attributes.current_position;\n  if (entity.state === 'closing' || entity.state === 'opening') return 'mdi:window-shutter-alert';\n  if (pos === 0) return 'mdi:window-shutter';\n  return 'mdi:window-shutter-open';\n]]]",
+    "custom_fields": {
+      "position": "[[[\n  const pos = entity.attributes.current_position;\n  if (entity.state === 'closing')\n    return '<span style=\"font-size:9px;font-weight:bold;color:#fff;\">fermeture</span>';\n  if (entity.state === 'opening')\n    return '<span style=\"font-size:9px;font-weight:bold;color:#fff;\">ouverture</span>';\n  if (pos === 0)\n    return '<span style=\"font-size:9px;font-weight:bold;color:#fff;\">ferm\\u00e9</span>';\n  if (pos === 100)\n    return '<span style=\"font-size:9px;font-weight:bold;color:#fff;\">ouvert</span>';\n  if (pos !== undefined && pos !== null)\n    return `<span style=\"font-size:9px;font-weight:bold;color:#fff;\">${pos}%</span>`;\n  return '';\n]]]"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "80px"
+        },
+        {
+          "border-left": "[[[\n  if (entity.state === 'closing' || entity.state === 'opening')\n    return '3px solid ' + variables.accent_moving;\n  if (entity.attributes.current_position === 0)\n    return '3px solid ' + variables.accent_closed;\n  return '3px solid ' + variables.accent_open;\n]]]"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        }
+      ],
+      "icon": [
+        {
+          "width": "36px"
+        },
+        {
+          "color": "[[[\n  if (entity.state === 'closing' || entity.state === 'opening')\n    return variables.accent_moving;\n  if (entity.attributes.current_position === 0)\n    return 'rgba(255,255,255,0.5)';\n  return variables.accent_open;\n]]]"
+        },
+        {
+          "filter": "[[[\n  if (entity.state !== 'closed' && entity.attributes.current_position !== 0)\n    return 'drop-shadow(0 0 5px rgba(66,165,245,0.6))';\n  return 'none';\n]]]"
+        },
+        {
+          "animation": "[[[\n  if (entity.state === 'closing' || entity.state === 'opening')\n    return 'pulse-shutter 1.5s ease-in-out infinite';\n  return 'none';\n]]]"
+        }
+      ],
+      "name": [
+        {
+          "font-size": "0.85em"
+        },
+        {
+          "font-weight": "bold"
+        },
+        {
+          "color": "#FFFFFF"
+        }
+      ],
+      "custom_fields": {
+        "position": [
+          {
+            "position": "absolute"
+          },
+          {
+            "bottom": "4px"
+          },
+          {
+            "right": "6px"
+          },
+          {
+            "background": "rgba(0,0,0,0.4)"
+          },
+          {
+            "border-radius": "8px"
+          },
+          {
+            "padding": "1px 6px"
+          }
+        ]
+      }
+    },
+    "extra_styles": "\n@keyframes pulse-shutter {\n  0%, 100% { opacity: 1; }\n  50% { opacity: 0.5; }\n}\n"
+  },
+  "glass_garage": {
+    "variables": {
+      "accent_open": "#FF9800",
+      "accent_closed": "#546E7A"
+    },
+    "show_name": true,
+    "show_state": false,
+    "show_icon": true,
+    "icon": "[[[\n  return entity.state === 'on' ? 'mdi:garage-open-variant' : 'mdi:garage-variant';\n]]]",
+    "tap_action": {
+      "action": "call-service",
+      "service": "script.turn_on",
+      "service_data": {
+        "entity_id": "[[[ return variables.script_entity || 'script.pulse_porte_garage' ]]]"
+      }
+    },
+    "hold_action": {
+      "action": "more-info"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "80px"
+        },
+        {
+          "border-left": "[[[\n  return '3px solid ' + (entity.state === 'on' ? variables.accent_open : variables.accent_closed);\n]]]"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        }
+      ],
+      "icon": [
+        {
+          "width": "36px"
+        },
+        {
+          "color": "[[[\n  return entity.state === 'on' ? variables.accent_open : 'rgba(255,255,255,0.5)';\n]]]"
+        },
+        {
+          "filter": "[[[\n  return entity.state === 'on' ? 'drop-shadow(0 0 5px rgba(255,152,0,0.6))' : 'none';\n]]]"
+        }
+      ],
+      "name": [
+        {
+          "font-size": "0.85em"
+        },
+        {
+          "font-weight": "bold"
+        },
+        {
+          "color": "[[[\n  return entity.state === 'on' ? variables.accent_open : '#FFFFFF';\n]]]"
+        }
+      ]
+    }
+  },
+  "icon_tiny": {
+    "size": "150%",
+    "show_name": false,
+    "show_state": false,
+    "show_value": false,
+    "show_icon": true,
+    "styles": {
+      "card": [
+        {
+          "width": "20px"
+        },
+        {
+          "height": "20px"
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ]
+    }
+  },
+  "command_template": {
+    "template": [
+      "glass_button_base",
+      "icon_tiny",
+      "state_on_off_with_bg"
+    ],
+    "tap_action": {
+      "action": "none"
+    },
+    "double_tap_action": {
+      "action": "toggle"
+    },
+    "styles": {
+      "card": [
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        },
+        {
+          "width": "30px"
+        },
+        {
+          "height": "30px"
+        }
+      ]
+    }
+  },
+  "state_on_off": {
+    "state": [
+      {
+        "value": "on",
+        "styles": {
+          "card": [
+            {
+              "background": "rgba(255, 193, 7, 0.15)"
+            },
+            {
+              "border-radius": "8px"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFC107"
+            },
+            {
+              "filter": "drop-shadow(0 0 5px rgba(255, 193, 7, 0.6))"
+            },
+            {
+              "transform": "scale(1.1)"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "rgba(255, 255, 255, 0.05)"
+            },
+            {
+              "border-radius": "8px"
+            }
+          ],
+          "icon": [
+            {
+              "color": "rgba(255, 255, 255, 0.5)"
+            },
+            {
+              "opacity": 0.7
+            },
+            {
+              "filter": "grayscale(100%)"
+            },
+            {
+              "transform": "scale(1.0)"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off2",
+        "styles": {
+          "card": [
+            {
+              "background": "rgba(255, 255, 255, 0.03)"
+            },
+            {
+              "border-radius": "8px"
+            }
+          ],
+          "icon": [
+            {
+              "color": "rgba(255, 255, 255, 0.3)"
+            },
+            {
+              "filter": "grayscale(100%)"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "state_on_off_with_bg": {
+    "template": "state_on_off"
+  },
+  "animation_effects": {
+    "state": [
+      {
+        "value": "on",
+        "styles": {
+          "icon": [
+            {
+              "animation": "pulse 2s infinite ease-in-out"
+            },
+            {
+              "transform": "scale(1.1)"
+            }
+          ]
+        }
+      },
+      {
+        "value": "active",
+        "styles": {
+          "card": [
+            {
+              "animation": "glow 1.5s infinite alternate"
+            }
+          ],
+          "icon": [
+            {
+              "animation": "spin 3s linear infinite"
+            },
+            {
+              "transform": "scale(1.2)"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "badge_base": {
+    "styles": {
+      "card": [
+        {
+          "height": "36px"
+        },
+        {
+          "width": "36px"
+        },
+        {
+          "border-radius": "100%"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
+        }
+      ],
+      "icon": [
+        {
+          "transition": "all 0.3s ease-in-"
+        }
+      ]
+    }
+  },
+  "badge_status": {
+    "variables": {
+      "gradient_on": "linear-gradient(135deg, #FFC107, #FFD54F)",
+      "gradient_off": "linear-gradient(135deg, #546E7A, #90A4AE)",
+      "border_on": "3px solid #FFC107",
+      "border_off": "3px solid #37474F",
+      "icon_on": "mdi:power",
+      "icon_off": "mdi:power-off",
+      "pulse_animation": "none"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "36px"
+        },
+        {
+          "width": "36px"
+        },
+        {
+          "border-radius": "100%"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
+        }
+      ],
+      "icon": [
+        {
+          "transition": "all 0.3s ease-in-out"
+        }
+      ]
+    },
+    "state": [
+      {
+        "value": "on",
+        "icon": "[[[ return variables.icon_on ]]]",
+        "styles": {
+          "card": [
+            {
+              "background": "[[[ return variables.gradient_on ]]]"
+            },
+            {
+              "border-left": "[[[ return variables.border_on ]]]"
+            },
+            {
+              "animation": "[[[ return variables.pulse_animation ]]]"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#FFFFFF"
+            },
+            {
+              "filter": "drop-shadow(0 0 4px rgba(255,255,255,0.5))"
+            }
+          ]
+        }
+      },
+      {
+        "value": "off",
+        "icon": "[[[ return variables.icon_off ]]]",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "[[[ return variables.gradient_off ]]]"
+            },
+            {
+              "border-left": "[[[ return variables.border_off ]]]"
+            }
+          ],
+          "icon": [
+            {
+              "color": "#CFD8DC"
+            },
+            {
+              "opacity": 0.8
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "field_command": {
+    "type": "custom:button-card",
+    "variables": {
+      "commands": ""
+    },
+    "aspect_ratio": "10/3",
+    "custom_fields": {
+      "command0": {
+        "card": {
+          "template": [
+            "command_template",
+            "state_on_off_with_bg",
+            "animation_effects"
+          ],
+          "type": "custom:button-card",
+          "entity": "[[[ if (variables.commands &&\n        variables.commands.length > 0)\n        return variables.commands[0];\n    return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "display": "[[[ if (!variables.commands ||\n        variables.commands.length < 1)\n      return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "command1": {
+        "card": {
+          "template": [
+            "command_template",
+            "state_on_off_with_bg"
+          ],
+          "type": "custom:button-card",
+          "entity": "[[[ if (variables.commands &&\n        variables.commands.length > 1)\n          return variables.commands[1];\n    return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "display": "[[[ if (!variables.commands || variables.commands.length < 2)\n      return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "command2": {
+        "card": {
+          "template": [
+            "command_template",
+            "state_on_off_with_bg"
+          ],
+          "type": "custom:button-card",
+          "entity": "[[[ if (variables.commands &&\n        variables.commands.length > 2)\n        return variables.commands[2];\n    return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "display": "[[[ if (!variables.commands || variables.commands.length < 3)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "styles": {
+      "custom_fields": {
+        "command0": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "left": "2%"
+          }
+        ],
+        "command1": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "left": "20%"
+          }
+        ],
+        "command2": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "left": "38%"
+          }
+        ]
+      }
+    }
+  },
+  "field_graph": {
+    "aspect_ratio": "10/3",
+    "type": "custom:button-card",
+    "double_tap_action": {
+      "action": "none"
+    },
+    "tap_action": {
+      "action": "none"
+    },
+    "hold_action": {
+      "action": "none"
+    },
+    "variables": {
+      "sensors": []
+    },
+    "custom_fields": {
+      "graph": {
+        "card": {
+          "type": "custom:mini-graph-card",
+          "entities": "[[[\n  if( variables.sensors === undefined) return '';\n  return variables.sensors.map(sensor => {\n    return { entity: sensor };\n  });\n]]]",
+          "color_thresholds": [
+            {
+              "value": -10,
+              "color": "#90CAF9"
+            },
+            {
+              "value": 0,
+              "color": "#4FC3F7"
+            },
+            {
+              "value": 10,
+              "color": "#80DEEA"
+            },
+            {
+              "value": 18,
+              "color": "#80CBC4"
+            },
+            {
+              "value": 24,
+              "color": "#A5D6A7"
+            },
+            {
+              "value": 30,
+              "color": "#FFD54F"
+            },
+            {
+              "value": 38,
+              "color": "#FF8A65"
+            }
+          ],
+          "hours_to_show": 24,
+          "hour24": true,
+          "points_per_hour": 2,
+          "animate": true,
+          "update_interval": 30,
+          "aggregate_func": "avg",
+          "line_width": 2,
+          "bar_spacing": 5,
+          "height": 100,
+          "group": true,
+          "card_mod": {
+            "style": "ha-card { border: none !important; background-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }\n"
+          },
+          "show": {
+            "labels": false,
+            "fill": "fade",
+            "state": false,
+            "name": false,
+            "icon": false,
+            "legend": false
+          }
+        }
+      }
+    },
+    "styles": {
+      "custom_fields": {
+        "graph": [
+          {
+            "position": "absolute"
+          },
+          {
+            "bottom": "-2px"
+          },
+          {
+            "left": "0px"
+          },
+          {
+            "width": "100%"
+          },
+          {
+            "height": "70%"
+          }
+        ]
+      },
+      "card": [
+        {
+          "border-radius": "12px"
+        }
+      ]
+    }
+  },
+  "field_secondary": {
+    "type": "custom:button-card",
+    "variables": {
+      "secondary_sensors": ""
+    },
+    "aspect_ratio": "10/3",
+    "custom_fields": {
+      "sensor0": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state) {\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state)\n        return variables.secondary_sensors[0];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 0
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 1)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "sensor1": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state) {\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state)\n        return variables.secondary_sensors[1];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 1
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 2)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "sensor2": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state) {\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state)\n        return variables.secondary_sensors[2];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 2
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 3)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "sensor3": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]].state) {\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]].state)\n        return variables.secondary_sensors[3];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 3
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 4)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "sensor4": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]].state) {\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]].state)\n        return variables.secondary_sensors[4];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 4
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 5)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "sensor5": {
+        "card": {
+          "type": "custom:button-card",
+          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]].state) {\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]].state)\n        return variables.secondary_sensors[5];\n      return '';\n]]]\n",
+          "styles": {
+            "card": [
+              {
+                "z-index": 5
+              },
+              {
+                "display": "[[[ if (!variables.secondary_sensors || variables.secondary_sensors.length < 6)\n    return 'none';\n    return 'block';\n]]]\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "styles": {
+      "custom_fields": {
+        "sensor0": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "0%"
+          }
+        ],
+        "sensor1": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "10%"
+          }
+        ],
+        "sensor2": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "20%"
+          }
+        ],
+        "sensor3": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "30%"
+          }
+        ],
+        "sensor4": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "40%"
+          }
+        ],
+        "sensor5": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "40%"
+          },
+          {
+            "right": "50%"
+          }
+        ]
+      }
+    }
+  },
+  "field_title": {
+    "type": "custom:button-card",
+    "variables": {
+      "sensors": [],
+      "secondary_sensors": [],
+      "name_sensors": []
+    },
+    "custom_fields": {
+      "title_left": {
+        "card": {
+          "template": "title_template",
+          "type": "custom:button-card",
+          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 0 && states[variables.sensors[0]].state)\n    return variables.sensors[0];\n  return '';\n]]]",
+          "name": "[[[\n  if( variables.sensors[0] === undefined)\n    return ''\n  if (variables.sensors.length < 2 && variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state) {\n  if (variables.name_sensors[0] && variables.sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.sensors[0] && variables.secondary_sensors[0])\n    return states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] )\n    return variables.name_sensors[0] ;\n  if (variables.secondary_sensors[0])\n    return states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  }\nelse\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement;\n  return states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement ;\n]]]",
+          "styles": {
+            "name": [
+              {
+                "text-align": "left"
+              },
+              {
+                "color": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"#E0E0E0\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]].state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"#FFC507\" : \"#E0E0E0\";\n]]]\n"
+              }
+            ],
+            "card": [
+              {
+                "background": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"transparent\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]].state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"linear-gradient(90deg, rgba(100,100,100,1.0) 0%, rgba(28,28,28,0.0) 100%)\" : \"\";\n]]]\n"
+              }
+            ]
+          }
+        }
+      },
+      "title_right": {
+        "card": {
+          "template": "title_template",
+          "type": "custom:button-card",
+          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 1 && states[variables.sensors[1]].state)\n    return variables.sensors[1];\n  return '';\n]]]",
+          "name": "[[[\n  if( variables.sensors[1] === undefined)\n    return ''\n  if (variables.name_sensors[1] && variables.sensors[1])\n    return variables.name_sensors[1] + ' ' + states[variables.sensors[1]].state + states[variables.sensors[1]].attributes.unit_of_measurement  ;\n  return states[variables.sensors[1]].state + states[variables.sensors[1]].attributes.unit_of_measurement;\n]]]",
+          "styles": {
+            "name": [
+              {
+                "color": "#E0E0E0"
+              },
+              {
+                "text-align": "right"
+              }
+            ],
+            "card": [
+              {
+                "z-index": 2
+              }
+            ]
+          }
+        }
+      }
+    },
+    "styles": {
+      "card": [],
+      "custom_fields": {
+        "title_left": [
+          {
+            "position": "absolute"
+          },
+          {
+            "left": "5%"
+          },
+          {
+            "top": "0%"
+          },
+          {
+            "width": "[[[\n  return variables.sensors.length === 1 ? '90%' : '45%';\n]]]\n"
+          }
+        ],
+        "title_right": [
+          {
+            "position": "absolute"
+          },
+          {
+            "right": "5%"
+          },
+          {
+            "top": "0%"
+          },
+          {
+            "width": "[[[\n  return variables.sensors.length > 1 ? '45%' : '0%';\n]]]\n"
+          }
+        ]
+      }
+    }
+  },
+  "title_template": {
+    "type": "custom:button-card",
+    "show_icon": false,
+    "show_state": false,
+    "show_name": true,
+    "show_label": false,
+    "styles": {
+      "name": [
+        {
+          "padding-left": "1%"
+        },
+        {
+          "justify-self": "start"
+        },
+        {
+          "left": "5px"
+        },
+        {
+          "font-weight": "bold"
+        }
+      ],
+      "state": null,
+      "card": [
+        {
+          "border-radius": "50%"
+        },
+        {
+          "height": "10px"
+        },
+        {
+          "font-size": "10px"
+        },
+        {
+          "border-radius": "0%"
+        },
+        {
+          "z-index": 1
+        },
+        {
+          "color": "yellow"
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ]
+    },
+    "hold_action": {
+      "action": "none"
+    }
+  },
+  "style_none": {
+    "styles": {
+      "card": [
+        {
+          "border-width": "0px !important;"
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ]
+    }
+  },
+  "style_no_title": {
+    "show_name": false,
+    "show_icon": true,
+    "name": " "
+  },
+  "style_cover_bg": {
+    "styles": {
+      "card": [
+        {
+          "background": "linear-gradient(135deg, #4CAFF0, #81C7F4)"
+        },
+        {
+          "border-left": "3px solid #2E7D32"
+        }
+      ],
+      "icon": [
+        {
+          "color": "#FFFFFF"
+        },
+        {
+          "filter": "drop-shadow(0 0 4px rgba(46, 125, 50, 0.5))"
+        },
+        {
+          "transform": "scale(1.1) rotate(0deg)"
+        }
+      ]
+    }
+  },
+  "button_base": {
+    "size": "140%",
+    "hold_action": {
+      "action": "more-info"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "38px"
+        },
+        {
+          "padding": "0.2em"
+        },
+        {
+          "--mdc-ripple-color": "#44729E"
+        },
+        {
+          "--mdc-ripple-press-opacity": 1
+        },
+        {
+          "background": "transparent !important"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        }
+      ],
+      "icon": [
+        {
+          "width": "18px"
+        },
+        {
+          "height": "15px"
+        },
+        {
+          "opacity": 1
+        }
+      ],
+      "name": [
+        {
+          "font-size": "10px"
+        },
+        {
+          "white-space": "normal"
+        }
+      ],
+      "state": [
+        {
+          "font-size": "10px"
+        },
+        {
+          "white-space": "normal"
+        }
+      ],
+      "label": [
+        {
+          "font-size": "10px"
+        },
+        {
+          "white-space": "normal"
+        }
+      ]
+    }
+  }
+}

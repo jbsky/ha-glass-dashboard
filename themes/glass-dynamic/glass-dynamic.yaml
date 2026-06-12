@@ -1,0 +1,130 @@
+# Glass Dynamic Theme for Home Assistant
+# Part of ha-glass-dashboard - https://github.com/jbsky/ha-glass-dashboard
+#
+# CONFIGURATION:
+#   Replace 'weather.home' with your weather entity (e.g. weather.my_city)
+#   Place background images in /config/www/backgrounds/weather/
+#
+weather-dynamic:
+  card-mod-theme: weather-dynamic
+
+  # Couleurs texte/icone pour fond sombre (photo meteo + glass)
+  primary-text-color: "#FFFFFF"
+  secondary-text-color: "rgba(255, 255, 255, 0.7)"
+  disabled-text-color: "rgba(255, 255, 255, 0.4)"
+  text-primary-color: "#FFFFFF"
+  state-icon-color: "rgba(255, 255, 255, 0.8)"
+  state-icon-active-color: "#FFC107"
+  primary-color: "#64b5f6"
+  accent-color: "#FFC107"
+  paper-item-icon-color: "rgba(255, 255, 255, 0.8)"
+
+  # Glass defaults pour les ha-card de premier niveau
+  ha-card-background: "rgba(20, 20, 30, 0.55)"
+  ha-card-border-radius: "12px"
+  ha-card-border-color: "transparent"
+  ha-card-box-shadow: "none"
+
+  # Glass global via card-mod (backdrop-filter + border)
+  card-mod-card-yaml: |
+    .: |
+      ha-card {
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+      }
+
+  # Background dynamique via images meteo + sun-aware
+  card-mod-view: |
+    hui-view, hui-panel-view {
+      {% set v = 2 %}
+      {% set sun = states('sun.sun') %}
+      {% set weather = states('weather.home') %}
+      {% set is_night = (sun == 'below_horizon') %}
+      {% set weather_images = {
+          'clear-night': '/local/backgrounds/weather/clearnight.jpg?v=' ~ v,
+          'cloudy': '/local/backgrounds/weather/cloudy.jpg?v=' ~ v,
+          'fog': '/local/backgrounds/weather/fog.jpg?v=' ~ v,
+          'hail': '/local/backgrounds/weather/hail.jpg?v=' ~ v,
+          'lightning': '/local/backgrounds/weather/lightning.jpg?v=' ~ v,
+          'lightning-rainy': '/local/backgrounds/weather/lightningrainy.jpg?v=' ~ v,
+          'partlycloudy': '/local/backgrounds/weather/partlycloudy.jpg?v=' ~ v,
+          'pouring': '/local/backgrounds/weather/pouring.jpg?v=' ~ v,
+          'rainy': '/local/backgrounds/weather/rainy.jpg?v=' ~ v,
+          'snowy': '/local/backgrounds/weather/snowy.jpg?v=' ~ v,
+          'snowy-rainy': '/local/backgrounds/weather/snowyrainy.jpg?v=' ~ v,
+          'sunny': '/local/backgrounds/weather/sunny.jpg?v=' ~ v,
+          'windy': '/local/backgrounds/weather/windy.jpg?v=' ~ v,
+          'windy-variant': '/local/backgrounds/weather/windyvariant.jpg?v=' ~ v,
+          'exceptional': '/local/backgrounds/weather/exceptional.jpg?v=' ~ v
+      } %}
+      {% if is_night and weather in ['sunny', 'partlycloudy'] %}
+        {% set bg = '/local/backgrounds/weather/clearnight.jpg?v=' ~ v %}
+      {% else %}
+        {% set bg = weather_images.get(weather, '/local/backgrounds/weather/partlycloudy.jpg?v=' ~ v) %}
+      {% endif %}
+      background: center / cover no-repeat fixed url("{{ bg }}") !important;
+      min-height: 100vh;
+    }
+
+  # Icone du tab meteo dynamique selon la meteo
+  card-mod-root-yaml: |
+    paper-tab:nth-child(3):
+      $: |
+        ha-icon {
+          {% set weather = states('weather.home') %}
+          {% set sun = states('sun.sun') %}
+          {% set is_night = (sun == 'below_horizon') %}
+          {% if is_night and weather in ['sunny', 'partlycloudy'] %}
+          --card-mod-icon: mdi:weather-night;
+          --card-mod-icon-color: #9b59b6;
+          {% elif weather == 'sunny' %}
+          --card-mod-icon: mdi:weather-sunny;
+          --card-mod-icon-color: #f39c12;
+          {% elif weather == 'clear-night' %}
+          --card-mod-icon: mdi:weather-night;
+          --card-mod-icon-color: #9b59b6;
+          {% elif weather == 'partlycloudy' %}
+          --card-mod-icon: mdi:weather-partly-cloudy;
+          --card-mod-icon-color: #f1c40f;
+          {% elif weather == 'cloudy' %}
+          --card-mod-icon: mdi:weather-cloudy;
+          --card-mod-icon-color: #95a5a6;
+          {% elif weather == 'rainy' %}
+          --card-mod-icon: mdi:weather-rainy;
+          --card-mod-icon-color: #3498db;
+          {% elif weather == 'pouring' %}
+          --card-mod-icon: mdi:weather-pouring;
+          --card-mod-icon-color: #2980b9;
+          {% elif weather == 'lightning-rainy' %}
+          --card-mod-icon: mdi:weather-lightning-rainy;
+          --card-mod-icon-color: #f1c40f;
+          {% elif weather == 'lightning' %}
+          --card-mod-icon: mdi:weather-lightning;
+          --card-mod-icon-color: #f1c40f;
+          {% elif weather == 'snowy' %}
+          --card-mod-icon: mdi:weather-snowy;
+          --card-mod-icon-color: #ecf0f1;
+          {% elif weather == 'snowy-rainy' %}
+          --card-mod-icon: mdi:weather-snowy-rainy;
+          --card-mod-icon-color: #bdc3c7;
+          {% elif weather == 'fog' %}
+          --card-mod-icon: mdi:weather-fog;
+          --card-mod-icon-color: #bdc3c7;
+          {% elif weather == 'windy' %}
+          --card-mod-icon: mdi:weather-windy;
+          --card-mod-icon-color: #1abc9c;
+          {% elif weather == 'windy-variant' %}
+          --card-mod-icon: mdi:weather-windy-variant;
+          --card-mod-icon-color: #16a085;
+          {% elif weather == 'hail' %}
+          --card-mod-icon: mdi:weather-hail;
+          --card-mod-icon-color: #bdc3c7;
+          {% elif weather == 'exceptional' %}
+          --card-mod-icon: mdi:weather-hurricane;
+          --card-mod-icon-color: #e74c3c;
+          {% else %}
+          --card-mod-icon: mdi:weather-partly-cloudy;
+          --card-mod-icon-color: #3498db;
+          {% endif %}
+        }

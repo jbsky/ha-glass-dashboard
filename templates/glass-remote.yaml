@@ -1,0 +1,107 @@
+# Glass Dashboard - Remote Control Templates
+# Compact colored button grid for IR/RF remote controls
+
+{
+  "remote_button": {
+    "variables": {
+      "btn_bg": "#374151",
+      "btn_color": "#FFFFFF",
+      "btn_height": "48px"
+    },
+    "show_name": true,
+    "show_icon": true,
+    "show_state": false,
+    "styles": {
+      "card": [
+        {
+          "background": "[[[ return variables.btn_bg ]]]"
+        },
+        {
+          "border-radius": "10px"
+        },
+        {
+          "height": "[[[ return variables.btn_height ]]]"
+        },
+        {
+          "border": "1px solid rgba(255,255,255,0.15) !important"
+        },
+        {
+          "box-shadow": "0 2px 4px rgba(0,0,0,0.3)"
+        },
+        {
+          "padding": "0"
+        },
+        {
+          "margin": "0"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        }
+      ],
+      "icon": [
+        {
+          "color": "[[[ return variables.btn_color ]]]"
+        },
+        {
+          "width": "20px"
+        },
+        {
+          "height": "20px"
+        }
+      ],
+      "name": [
+        {
+          "color": "[[[ return variables.btn_color ]]]"
+        },
+        {
+          "font-size": "10px"
+        },
+        {
+          "font-weight": "500"
+        }
+      ]
+    }
+  },
+  "remote_separator": {
+    "show_name": false,
+    "show_icon": false,
+    "show_state": false,
+    "styles": {
+      "card": [
+        {
+          "background": "transparent !important"
+        },
+        {
+          "border": "none !important"
+        },
+        {
+          "box-shadow": "none !important"
+        },
+        {
+          "height": "2px"
+        },
+        {
+          "margin": "4px 0"
+        },
+        {
+          "border-bottom": "1px solid rgba(255,255,255,0.12)"
+        },
+        {
+          "--ha-card-background": "transparent"
+        },
+        {
+          "backdrop-filter": "none !important"
+        },
+        {
+          "-webkit-backdrop-filter": "none !important"
+        }
+      ]
+    }
+  }
+}
