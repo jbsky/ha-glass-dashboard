@@ -81,11 +81,16 @@ Compact colored button grid for IR/RF remotes:
 
 ## Screenshots
 
-> Add your screenshots here after installation
-
-| Home (Sunny) | Home (Night) | Remote |
+| Home | Weather | Remote |
 |:---:|:---:|:---:|
-| ![sunny](docs/screenshots/home-sunny.png) | ![night](docs/screenshots/home-night.png) | ![remote](docs/screenshots/remote.png) |
+| ![home](docs/screenshots/home-view.jpg) | ![weather](docs/screenshots/weather-view.jpg) | ![remote](docs/screenshots/remote-view.jpg) |
+
+<details>
+<summary>Mobile view</summary>
+
+![mobile](docs/screenshots/home-mobile.jpg)
+
+</details>
 
 ---
 
