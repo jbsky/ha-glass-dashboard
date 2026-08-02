@@ -83,12 +83,12 @@ Compact colored button grid for IR/RF remotes:
 
 | Home | Weather | Remote |
 |:---:|:---:|:---:|
-| ![home](docs/screenshots/home-view.jpg) | ![weather](docs/screenshots/weather-view.jpg) | ![remote](docs/screenshots/remote-view.jpg) |
+| ![home](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/home-view.jpg) | ![weather](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/weather-view.jpg) | ![remote](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/remote-view.jpg) |
 
 <details>
 <summary>Mobile view</summary>
 
-![mobile](docs/screenshots/home-mobile.jpg)
+![mobile](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/home-mobile.jpg)
 
 </details>
 
@@ -178,7 +178,7 @@ Or use [decluttering-card](https://github.com/custom-cards/decluttering-card) fo
 #### `glass_climate`
 Full HVAC control widget with power button, temperature display, up/down controls, and status.
 
-![glass_climate](docs/screenshots/components/glass_climate.jpg)
+![glass_climate](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_climate.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -188,7 +188,7 @@ Full HVAC control widget with power button, temperature display, up/down control
 #### `glass_container`
 Horizontal-stack wrapper with glass effect. Use as a row container for multiple sub-cards (sensors, device buttons, etc.).
 
-![glass_container](docs/screenshots/components/glass_container_sensors.jpg)
+![glass_container](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_container_sensors.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -197,7 +197,7 @@ Horizontal-stack wrapper with glass effect. Use as a row container for multiple 
 #### `state_on_off`
 Visual state feedback with colored icon when entity is on. Combine with `glass_container` for device control rows.
 
-![state_on_off](docs/screenshots/components/state_on_off.jpg)
+![state_on_off](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -206,7 +206,7 @@ Visual state feedback with colored icon when entity is on. Combine with `glass_c
 #### `glass_cover`
 Shutter/blind control with animation and position badge.
 
-![glass_cover](docs/screenshots/components/glass_covers_row.jpg)
+![glass_cover](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_covers_row.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -215,7 +215,7 @@ Shutter/blind control with animation and position badge.
 #### `glass_garage`
 Garage door control with open/close state and animated icon.
 
-![glass_garage](docs/screenshots/components/glass_garage.jpg)
+![glass_garage](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_garage.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -225,7 +225,7 @@ Garage door control with open/close state and animated icon.
 
 Composable sub-components for building sensor/monitoring cards. Combine `field_graph`, `field_secondary`, `field_command`, and `field_title` in a single card.
 
-![field_templates](docs/screenshots/components/field_templates_pair.jpg)
+![field_templates](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates_pair.jpg)
 
 #### `field_graph`
 Inline mini-graph-card sparkline.
@@ -244,14 +244,14 @@ Up to 3 toggle/command buttons inside a card.
 #### `badge_status`
 Compact status indicator pill — shows entity state as a small colored badge in the view header.
 
-![badge_status](docs/screenshots/components/badge_status.jpg)
+![badge_status](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_status.jpg)
 
 ### Remote Buttons
 
 #### `remote_button`
 Colored button for remote control grids. Compact 4-column layout designed for IR/RF remotes.
 
-![remote_view](docs/screenshots/components/remote_view.jpg)
+![remote_view](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/remote_view.jpg)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
