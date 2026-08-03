@@ -265,7 +265,9 @@ Compact status indicator pill — shows entity state as a small colored badge in
 #### `remote_button`
 Colored button for remote control grids. Compact 4-column layout designed for IR/RF remotes.
 
-![remote_view](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/remote_view.jpg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/remote_view.jpg" alt="remote_view" width="384">
+</p>
 
 | Variable | Default | Description |
 |----------|---------|-------------|
