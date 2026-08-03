@@ -67,9 +67,9 @@ variables:
 
 ### Cover Widget (`glass_cover`)
 Animated shutter/blind control:
-- Open/close/stop buttons
-- Position badge with percentage
-- Animated icon (opens/closes with state)
+- Position badge — `fermé`, `ouvert`, or the current percentage
+- Icon, color and left border follow the position; pulsing icon while moving
+- Tap to toggle, hold for more-info
 
 ### Remote Control Layout
 Compact colored button grid for IR/RF remotes:
@@ -212,22 +212,38 @@ Several of them inside a `glass_container` row:
 ![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.jpg)
 
 #### `glass_cover`
-Shutter/blind control with animation and position badge.
+Shutter/blind control with animation and position badge. The badge, the icon color and the left
+border all follow the current position — `fermé` at 0 %, `ouvert` at 100 %, the percentage in
+between, and `ouverture` / `fermeture` (with a pulsing icon) while the shutter is moving.
 
-![glass_cover](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_covers_row.jpg)
+| 65 % open | 17 % open | closed |
+|:---:|:---:|:---:|
+| ![cover 65%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover.jpg) | ![cover 17%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_partial.jpg) | ![cover closed](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_closed.jpg) |
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `cover_entity` | Yes | Cover entity ID |
+| `entity` | Yes | Cover entity — the card reads its `current_position` and its `opening` / `closing` state |
+| `accent_open` | No | Icon and border color when open (default `#42A5F5`) |
+| `accent_closed` | No | Border color when closed (default `#546E7A`) |
+| `accent_moving` | No | Icon and border color while moving (default `#7E57C2`) |
+
+Tap toggles the cover, hold opens more-info.
 
 #### `glass_garage`
-Garage door control with open/close state and animated icon.
+Garage door control. The card is driven by **two entities**: a contact sensor gives the state
+(icon, color, left border), and a script does the action — a garage motor is a dry-contact pulse,
+not a switch, so the card can't just toggle the sensor.
 
 ![glass_garage](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_garage.jpg)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `garage_entity` | Yes | Cover entity ID (garage type) |
+| `entity` | Yes | Door contact/closure sensor (`binary_sensor`) — `on` = open (amber `mdi:garage-open-variant`), `off` = closed (grey `mdi:garage-variant`) |
+| `script_entity` | No | Script fired on tap, via `script.turn_on` (default `script.pulse_porte_garage`) |
+| `accent_open` | No | Icon and border color when open (default `#FF9800`) |
+| `accent_closed` | No | Border color when closed (default `#546E7A`) |
+
+Tap fires the script, hold opens more-info on the sensor.
 
 ### Field Templates
 
