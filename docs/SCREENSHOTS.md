@@ -78,6 +78,32 @@ Place all screenshots in:
 - `programmation-desktop.png` — Clean scheduler view
 - `home-night.png` — Night mode (capture after sunset or change sun entity)
 
+## Component Crops (`docs/screenshots/components/`)
+
+The per-template close-ups used in the README's *Template Reference* are **crops of the
+committed full-view captures**, not separate captures:
+
+| Crop | Source | Region |
+|------|--------|--------|
+| `state_on_off_off.jpg` | `components/state_on_off.jpg` (2× session) | 3rd tile of the device row |
+| `state_on_off_on.jpg` | `home-view.jpg` (1×, upscaled ×2) | same tile, entity on |
+| `remote_view.jpg` | `remote-view.jpg` | `x 896–1280, y 60–612` (button grid centred) |
+| `field_templates.jpg` | left card of `field_templates_pair.jpg` | — |
+
+Gotchas for whoever redoes them:
+
+- The original **2× (`deviceScaleFactor=2`) capture session was never committed** — only its
+  crops were. So a crop that is truncated (as `remote_view.jpg` was) can only be redone from
+  the 1× full views, at half the pixel density.
+- The full views carry **baked-in annotation overlays** (labels, leader lines, a cyan highlight
+  rectangle around the remote card). Crop *inside* the highlight stroke, and check for leader
+  arrows landing on the UI — one had to be inpainted out of the `Noel` button.
+- HA (`home.home.arpa`, 192.168.4.50) is **not reachable from `ansible.home.arpa`** (ports
+  22/80/443/8123 all filtered), so live re-capture with the Playwright script below has to run
+  from a host on a VLAN that can reach it.
+- An on/off pair must be the **same entity**: `home-view.jpg` and `components/state_on_off.jpg`
+  come from different sessions and happen to have the 3rd tile in opposite states.
+
 ## After Capturing
 
 ```bash

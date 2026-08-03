@@ -197,11 +197,19 @@ Horizontal-stack wrapper with glass effect. Use as a row container for multiple 
 #### `state_on_off`
 Visual state feedback with colored icon when entity is on. Combine with `glass_container` for device control rows.
 
-![state_on_off](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.jpg)
+| `on` | `off` |
+|:----:|:-----:|
+| ![state_on_off on](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_on.jpg) | ![state_on_off off](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_off.jpg) |
+
+Same button, both states — the icon turns amber and the tile brightens when the entity is on.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `entity` | Yes | Entity to toggle |
+
+Several of them inside a `glass_container` row:
+
+![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.jpg)
 
 #### `glass_cover`
 Shutter/blind control with animation and position badge.
@@ -225,7 +233,13 @@ Garage door control with open/close state and animated icon.
 
 Composable sub-components for building sensor/monitoring cards. Combine `field_graph`, `field_secondary`, `field_command`, and `field_title` in a single card.
 
-![field_templates](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates_pair.jpg)
+A single card — title, sparkline, secondary value and command buttons:
+
+![field_templates](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates.jpg)
+
+Two of them side by side in a row:
+
+![field_templates pair](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates_pair.jpg)
 
 #### `field_graph`
 Inline mini-graph-card sparkline.
