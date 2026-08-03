@@ -1,6 +1,22 @@
 # How to Capture Screenshots
 
-## Method 1: Browser DevTools (Recommended)
+## Method 0: the script (recommended)
+
+`scripts/capture_screenshots.py` drives Chromium through Playwright and writes both the view
+screenshots and the per-template crops, at `deviceScaleFactor=2`. It authenticates with a
+long-lived access token, and can relay through an SSH host when the machine running it has no
+route to Home Assistant. Read its docstring for the environment variables; the component part
+is documented at the bottom of this page.
+
+```bash
+pip install playwright && playwright install chromium
+HA_URL=http://homeassistant.local:8123 python3 scripts/capture_screenshots.py
+```
+
+The methods below are the manual fallbacks, for a one-off shot or an instance the script
+can't reach.
+
+## Method 1: Browser DevTools
 
 ### Desktop Screenshots (1920x1080)
 1. Open your HA dashboard in Chrome/Edge
@@ -68,23 +84,61 @@ Place all screenshots in:
 ~/ha-glass-dashboard/docs/screenshots/
 ```
 
-### Required for README (minimum 3):
-- `home-desktop.png` — Main view with weather background (the hero image)
-- `home-mobile.png` — Same view on mobile
-- `remote-mobile.png` — Remote control on mobile (shows compact layout)
+### Required for README
 
-### Nice to have:
-- `meteo-desktop.png` — Weather badges view
-- `programmation-desktop.png` — Clean scheduler view
-- `home-night.png` — Night mode (capture after sunset or change sun entity)
+The script names files `<view>-desktop.png` / `<view>-mobile.png` after `HA_VIEWS`, and the
+README links `home-view.jpg`, `weather-view.jpg`, `remote-view.jpg` and `home-mobile.jpg` —
+full-view shots are committed as JPEG because a 2x PNG of a photographic background weighs
+around 9 MB. Downscale the 2x capture to 1920 wide and save at quality 90.
+
+## Component Crops (`docs/screenshots/components/`)
+
+The per-template close-ups used in the README's *Template Reference* are captured by the same
+script, one file per template, each cropped **by the browser from the card element itself**:
+
+```bash
+HA_URL=http://home.home.arpa HA_SSH_RELAY=root@node1.home.arpa \
+HA_SSH_TARGET=192.168.4.50:80 HA_COMPONENTS=1 HA_VIEWS_ONLY=0 \
+python3 scripts/capture_screenshots.py
+
+# un seul composant
+HA_ONLY="state_on_off_on state_on_off_off" ... python3 scripts/capture_screenshots.py
+```
+
+There are no coordinates to re-measure: the `COMPONENTS` list at the top of the script maps a
+name to a locator, and `pick` says which match to keep (`smallest` = the card itself,
+`largest` = the row it sits in, `union` = clip to a set of elements, `index` = position).
+
+Things worth knowing before touching that list:
+
+- **A `:has-text()` selector also matches every ancestor** containing the text, plus inner
+  labels — hence `pick`. `inner_text()` is empty on `button-card` (content lives in shadow
+  DOM), but `:has-text()` sees through it.
+- **Text must be unique enough.** `button-card:has-text("Garage")` matched a label inside a
+  sensor card; scoping it to the covers row (`hui-card:has(button-card:has-text("Baie vitr"))`)
+  fixed it. The same applies to `Cuisine`, which appears in both the lamp row and the covers.
+- **The remote panel is not a card** but eleven stacked `hui-grid-card` rows, so it uses
+  `union` — the frame is centred on the grid by construction.
+- **The device row has no text at all** (icons only) and is the one entry addressed by
+  `index`; a layout change will silently point it at another card.
+- **`state_on_off_on` / `_off` drive a real switch** (`HA_LAMP_ENTITY`, default
+  `switch.lumiere_wc`). The script records the state it found, sets what it needs, and puts it
+  back — including when a capture raises.
+- **The theme background follows a weather entity, not the sun.** `weather.marseille` and
+  `weather.senas` stay on `clear-night` for about an hour and a half after sunrise: capture too
+  early and the glass sits on a night sky.
 
 ## After Capturing
 
 ```bash
 cd ~/ha-glass-dashboard
 git add docs/screenshots/
-git commit -S -m "docs: add dashboard screenshots"
-git push origin main
+git commit -S -m "docs: refresh dashboard screenshots"
+git push
 ```
 
-Then update the README image references (they already point to `docs/screenshots/`).
+The README references `docs/screenshots/` through absolute `raw.githubusercontent.com` URLs on
+`main` — deliberately, so the images also render where HACS shows the README out of repo
+context. The flip side is that on a branch the preview keeps showing `main`'s images, and any
+file added by the branch 404s until it is merged. Review new images by their raw URL pinned to
+the commit, not through the README preview.
