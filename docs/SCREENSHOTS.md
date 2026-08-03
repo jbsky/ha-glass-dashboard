@@ -89,6 +89,8 @@ committed full-view captures**, not separate captures:
 | `state_on_off_on.jpg` | `home-view.jpg` (1×, upscaled ×2) | same tile, entity on |
 | `remote_view.jpg` | `remote-view.jpg` | `x 896–1280, y 60–612` (button grid centred) |
 | `field_templates.jpg` | left card of `field_templates_pair.jpg` | — |
+| `glass_cover_partial.jpg` | `components/glass_covers_row.jpg` | 2nd card (`x 254–508`) |
+| `glass_cover_closed.jpg` | `components/glass_covers_row.jpg` | 3rd card (`x 508–762`) |
 
 Gotchas for whoever redoes them:
 
@@ -103,6 +105,9 @@ Gotchas for whoever redoes them:
   from a host on a VLAN that can reach it.
 - An on/off pair must be the **same entity**: `home-view.jpg` and `components/state_on_off.jpg`
   come from different sessions and happen to have the 3rd tile in opposite states.
+- **No lit lightbulb exists in any committed capture** — the seven-lamp row is off in every one
+  of them, so the `state_on_off` pair uses the LED/socket tile instead. If you ever recapture,
+  switch one of those lamps on first: a bulb reads as on/off more immediately than an LED.
 
 ## After Capturing
 
