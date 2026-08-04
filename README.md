@@ -292,9 +292,10 @@ is a `custom_field`, which is why those templates set `overflow: visible` on the
 Four badges out of the header above, each shot on its own, in the state they happened to be
 in. The doorbell is on with its relay unreachable — hence the orange circle instead of the
 yellow one, and the red dot in the corner; by the time the row above was shot it had been
-switched off, which is the grey circle. The washing machine is plugged in but idle and the pump
-is on, so both pills read the power being drawn; the washing machine swaps in the time left
-once a cycle starts.
+switched off, which is the grey circle. The washing machine is plugged in but idle, so the
+circle is green while the drum stays crossed out — the icon follows the machine, the color
+follows the plug. Both it and the pump read the power being drawn, and the washing machine
+swaps in the time left once a cycle starts.
 
 #### `badge_base`
 Shape only, no state: a 36 px circle with a drop shadow and a transition on every property.
@@ -378,6 +379,10 @@ An appliance behind a plug: the badge follows the switch *and* a machine-state s
 has four looks — unplugged, idle, running, paused — and carries both the time left and the
 power drawn. Nothing but the dark circle shows while the plug is off.
 
+The two follow different things on purpose. The circle is the plug — dark when it is cut,
+colored as soon as it feeds the machine. The icon is the machine: it stays crossed out until a
+cycle actually runs, so a green circle with a crossed-out drum reads "powered, doing nothing".
+
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `state_entity` | — | Machine-state sensor |
@@ -388,7 +393,7 @@ power drawn. Nothing but the dark circle shows while the plug is off.
 | `gradient_off` / `_idle` / `_run` / `_pause` | dark / green / teal / orange | Background per look |
 | `border_off` / `_idle` / `_run` / `_pause` | `3px solid …` | Left border per look |
 | `glow_off` / `_idle` / `_run` / `_pause` | `grayscale…` / `drop-shadow…` | Icon `filter` per look |
-| `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon |
+| `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon while a cycle runs / any other time |
 | `pulse_animation` | `badge-pulse 1.5s ease-in-out infinite` | Animation while running |
 | `pulse_from` / `pulse_to` | teal | The two glow colors of `badge-pulse` |
 | `countdown_bg` / `power_bg` | teal / green | Pill backgrounds |

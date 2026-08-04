@@ -1146,7 +1146,7 @@
     "show_name": false,
     "show_state": false,
     "show_icon": true,
-    "icon": "[[[\n  return entity.state === 'on' ? variables.icon_on : variables.icon_off;\n]]]",
+    "icon": "[[[\n  if (entity.state !== 'on') return variables.icon_off;\n  if (!variables.state_entity) return variables.icon_on;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  return (variables.run_states || []).includes(v) ? variables.icon_on : variables.icon_off;\n]]]",
     "triggers_update": "[[[\n  return [entity ? entity.entity_id : null, variables.state_entity,\n          variables.finish_entity, variables.power_entity].filter(Boolean);\n]]]",
     "custom_fields": {
       "countdown": "[[[\n  if (entity.state !== 'on') return '';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return '';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]",
