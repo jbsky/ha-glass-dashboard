@@ -84,15 +84,12 @@ Place all screenshots in:
 ~/ha-glass-dashboard/docs/screenshots/
 ```
 
-### Required for README (minimum 3):
-- `home-desktop.png` — Main view with weather background (the hero image)
-- `home-mobile.png` — Same view on mobile
-- `remote-mobile.png` — Remote control on mobile (shows compact layout)
+### Required for README
 
-### Nice to have:
-- `meteo-desktop.png` — Weather badges view
-- `programmation-desktop.png` — Clean scheduler view
-- `home-night.png` — Night mode (capture after sunset or change sun entity)
+The script names files `<view>-desktop.png` / `<view>-mobile.png` after `HA_VIEWS`, and the
+README links `home-view.jpg`, `weather-view.jpg`, `remote-view.jpg` and `home-mobile.jpg` —
+full-view shots are committed as JPEG because a 2x PNG of a photographic background weighs
+around 9 MB. Downscale the 2x capture to 1920 wide and save at quality 90.
 
 ## Component Crops (`docs/screenshots/components/`)
 
@@ -130,3 +127,18 @@ Things worth knowing before touching that list:
 - **The theme background follows a weather entity, not the sun.** `weather.marseille` and
   `weather.senas` stay on `clear-night` for about an hour and a half after sunrise: capture too
   early and the glass sits on a night sky.
+
+## After Capturing
+
+```bash
+cd ~/ha-glass-dashboard
+git add docs/screenshots/
+git commit -S -m "docs: refresh dashboard screenshots"
+git push
+```
+
+The README references `docs/screenshots/` through absolute `raw.githubusercontent.com` URLs on
+`main` — deliberately, so the images also render where HACS shows the README out of repo
+context. The flip side is that on a branch the preview keeps showing `main`'s images, and any
+file added by the branch 404s until it is merged. Review new images by their raw URL pinned to
+the commit, not through the README preview.

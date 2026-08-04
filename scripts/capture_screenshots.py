@@ -60,6 +60,15 @@ Two things bite when doing that:
   a UNIX socket path is capped at 108 bytes.
 
 HA_SSH_RELAY does that second form for you, MAP_HOST included.
+
+Adapting it to your instance
+----------------------------
+The `COMPONENTS` list, `HA_LAMP_ENTITY` and the `HA_SSH_*` defaults describe the dashboard this
+theme was built on: the locators match its card names ("Office AC", "Escalier", "Baie vitr"…)
+and the on/off pair drives one of its switches. Point them at your own entities before running
+`HA_COMPONENTS=1`, or the locators will simply find nothing. The relay also passes
+`StrictHostKeyChecking=no`, which is fine for a host you already trust and wrong for one you
+don't.
 """
 
 import json
