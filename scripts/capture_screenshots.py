@@ -7,8 +7,9 @@ works when the browser reaches Home Assistant from an already-trusted source add
 It also captures the per-template close-ups used in the README's *Template Reference*: each
 one is cropped by the browser from the card element itself, so there are no coordinates to
 re-measure when the layout moves. Cards that only make sense in a given state (a light on
-*and* off) carry a `state` entry — the script sets it, captures, and restores the entity to
-the state it found it in.
+*and* off, a shutter part-way open, a shutter in motion) carry a `setup` entry — the script
+drives the entity there, captures, and puts it back where it found it. `frames` turns a
+component into an animated GIF, which is the only way to show the moving state.
 
 Usage
 -----
@@ -38,6 +39,7 @@ Environment
     HA_COMPONENTS   set to 1 to also capture the per-template cards
     HA_ONLY         space-separated component names to limit the run
     HA_LAMP_ENTITY  switch used for the on/off pair   (default switch.lumiere_wc)
+    HA_COVER_ENTITY cover driven for the cover shots  (default cover.volet_roulant_cuisine)
     HA_SSH_RELAY    "user@host" — relay every browser connection through that host
     HA_SSH_TARGET   "ip:port" of HA as seen from the relay host   (default 192.168.4.50:80)
     HA_RELAY_PORT   local port for the relay          (default 18126)
@@ -71,6 +73,7 @@ and the on/off pair drives one of its switches. Point them at your own entities 
 don't.
 """
 
+import io
 import json
 import os
 import socket
@@ -93,6 +96,7 @@ WANT_MOBILE = os.environ.get("HA_MOBILE", "1") != "0"
 WANT_COMPONENTS = os.environ.get("HA_COMPONENTS", "0") == "1"
 ONLY = set(os.environ.get("HA_ONLY", "").split()) or None
 LAMP_ENTITY = os.environ.get("HA_LAMP_ENTITY", "switch.lumiere_wc")
+COVER_ENTITY = os.environ.get("HA_COVER_ENTITY", "cover.volet_roulant_cuisine")
 SSH_RELAY = os.environ.get("HA_SSH_RELAY", "")
 SSH_TARGET = os.environ.get("HA_SSH_TARGET", "192.168.4.50:80")
 RELAY_PORT = int(os.environ.get("HA_RELAY_PORT", "18126"))
@@ -119,20 +123,24 @@ COMPONENTS = [
 
     {"name": "state_on_off_on", "view": "/lovelace/0", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Escalier")) button-card:has-text("WC")',
-     "state": "on"},
+     "setup": {"entity": LAMP_ENTITY, "want": "on"}},
 
     {"name": "state_on_off_off", "view": "/lovelace/0", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Escalier")) button-card:has-text("WC")',
-     "state": "off"},
+     "setup": {"entity": LAMP_ENTITY, "want": "off"}},
 
     {"name": "state_on_off", "view": "/lovelace/0", "pick": "index", "index": 2,
      "locator": "hui-card"},
 
-    {"name": "glass_cover", "view": "/lovelace/0", "pick": "smallest",
-     "locator": 'button-card:has-text("Baie vitr")'},
+    # un seul aller-retour du volet cuisine : l'animation d'abord, l'etat stabilise ensuite
+    {"name": "glass_cover_moving", "view": "/lovelace/0", "pick": "smallest",
+     "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Cuisin")',
+     "setup": {"entity": COVER_ENTITY, "want": 60, "while_moving": True},
+     "frames": 12, "interval_ms": 600},
 
-    {"name": "glass_cover_partial", "view": "/lovelace/0", "pick": "smallest",
-     "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Cuisin")'},
+    {"name": "glass_cover", "view": "/lovelace/0", "pick": "smallest",
+     "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Cuisin")',
+     "setup": {"entity": COVER_ENTITY, "want": 60}},
 
     {"name": "glass_cover_closed", "view": "/lovelace/0", "pick": "smallest",
      "locator": 'button-card:has-text("Porte fen")'},
@@ -322,42 +330,134 @@ def capture_card(page, spec, target):
     return box
 
 
+def capture_animation(page, spec, target):
+    """Save an animated GIF of a card that is currently moving.
+
+    Element screenshots come back as PNG bytes; a handful of them a few hundred ms apart is
+    enough to show the pulsing icon and the position climbing in the badge.
+    """
+    from PIL import Image                       # only needed for the animated components
+
+    boxed = visible_boxes(page, spec["locator"])
+    if not boxed:
+        raise RuntimeError(f"{spec['name']}: no visible match for {spec['locator']}")
+    boxed.sort(key=lambda t: t[0]["width"] * t[0]["height"])
+    box, card = boxed[0] if spec.get("pick", "smallest") == "smallest" else boxed[-1]
+
+    interval = spec.get("interval_ms", 600)
+    frames = []
+    for _ in range(spec.get("frames", 10)):
+        frames.append(Image.open(io.BytesIO(card.screenshot(timeout=20000))).convert("RGB"))
+        page.wait_for_timeout(interval)
+
+    palette = [f.quantize(colors=128) for f in frames]
+    palette[0].save(target, save_all=True, append_images=palette[1:],
+                    duration=interval, loop=0, optimize=True)
+    return box
+
+
+class Stage:
+    """Puts entities in the state a component needs, and undoes it afterwards.
+
+    Every entity is snapshotted the first time it is touched — state for a switch, position
+    for a cover — and restored at the end, including when a capture raises.
+    """
+
+    def __init__(self, token, origin):
+        self.token, self.origin = token, origin
+        self.initial = {}
+
+    def _get(self, entity):
+        s = rest(self.token, f"/api/states/{entity}", origin=self.origin)
+        return s["state"], s["attributes"].get("current_position")
+
+    def _set(self, entity, want):
+        if isinstance(want, int):
+            rest(self.token, "/api/services/cover/set_cover_position",
+                 {"entity_id": entity, "position": want}, origin=self.origin)
+        else:
+            domain = entity.split(".", 1)[0]
+            rest(self.token, f"/api/services/{domain}/turn_{want}",
+                 {"entity_id": entity}, origin=self.origin)
+
+    def settle(self, entity, target, timeout=180):
+        """Wait until the entity actually reached `target`.
+
+        Waiting for "not moving" is not enough: a cover reports its old state for a second or
+        two after the command, so the first poll would return immediately and the caller would
+        capture — or report a restore — while the shutter is still travelling.
+        """
+        deadline = time.time() + timeout
+        time.sleep(3)
+        while time.time() < deadline:
+            state, pos = self._get(entity)
+            moving = state in ("opening", "closing")
+            if isinstance(target, int):
+                if not moving and pos is not None and abs(pos - target) <= 2:
+                    return state, pos
+            elif not moving and state == target:
+                return state, pos
+            time.sleep(2)
+        state, pos = self._get(entity)
+        print(f"  WARNING {entity} is {state} ({pos}%), wanted {target} after {timeout}s")
+        return state, pos
+
+    def want(self, entity, target, while_moving=False):
+        if entity not in self.initial:
+            self.initial[entity] = self._get(entity)
+            was = self.initial[entity]
+            print(f"  {entity} was {was[0]}" + (f" at {was[1]}%" if was[1] is not None else ""))
+        state, pos = self._get(entity)
+        if (isinstance(target, int) and pos == target) or state == target:
+            return
+        self._set(entity, target)
+        if while_moving:
+            time.sleep(2)                     # laisser l'animation demarrer
+        else:
+            self.settle(entity, target)
+            time.sleep(3)                     # laisser le badge se stabiliser
+
+    def restore(self):
+        for entity, (state, pos) in self.initial.items():
+            target = pos if pos is not None else state
+            self._set(entity, target)
+            now, back = self.settle(entity, target)
+            detail = f" at {back}%" if back is not None else ""
+            print(f"  {entity} restored to {now}{detail} (was {state})")
+
+
 def capture_components(page, token, origin):
     out = os.path.join(OUT, "components")
     os.makedirs(out, exist_ok=True)
-    initial = None
+    stage = Stage(token, origin)
     view = None
     try:
         for spec in COMPONENTS:
             if ONLY and spec["name"] not in ONLY:
                 continue
-            wanted = spec.get("state")
-            if wanted:
-                current = rest(token, f"/api/states/{LAMP_ENTITY}", origin=origin)["state"]
-                if initial is None:
-                    initial = current
-                    print(f"  {LAMP_ENTITY} was {initial}")
-                if current != wanted:
-                    domain = LAMP_ENTITY.split(".", 1)[0]
-                    rest(token, f"/api/services/{domain}/turn_{wanted}",
-                         {"entity_id": LAMP_ENTITY}, origin=origin)
-                    time.sleep(4)
-                view = None                       # forcer un rechargement pour l'etat courant
+            setup = spec.get("setup")
+            moving = bool(setup and setup.get("while_moving"))
+            if setup and not moving:
+                stage.want(setup["entity"], setup["want"])
+                view = None                   # forcer un rechargement pour l'etat courant
             if spec["view"] != view:
                 page.goto(HA_URL + spec["view"], wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_timeout(SETTLE_MS)
                 view = spec["view"]
-            target = os.path.join(out, f"{spec['name']}.png")
-            box = capture_card(page, spec, target)
+            if moving:
+                # la page est deja chargee : le dashboard suit l'etat en direct, un rechargement
+                # ici brulerait le trajet du volet pendant SETTLE_MS
+                stage.want(setup["entity"], setup["want"], while_moving=True)
+                view = None                   # l'etat aura change pour la suite
+            if spec.get("frames"):
+                target = os.path.join(out, f"{spec['name']}.gif")
+                box = capture_animation(page, spec, target)
+            else:
+                target = os.path.join(out, f"{spec['name']}.png")
+                box = capture_card(page, spec, target)
             print(f"  {target}  ({box['width']:.0f}x{box['height']:.0f} css)")
     finally:
-        if initial is not None:
-            domain = LAMP_ENTITY.split(".", 1)[0]
-            rest(token, f"/api/services/{domain}/turn_{initial}",
-                 {"entity_id": LAMP_ENTITY}, origin=origin)
-            time.sleep(2)
-            back = rest(token, f"/api/states/{LAMP_ENTITY}", origin=origin)["state"]
-            print(f"  {LAMP_ENTITY} restored to {back} (was {initial})")
+        stage.restore()
 
 
 def main():

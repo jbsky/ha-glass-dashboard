@@ -121,9 +121,16 @@ Things worth knowing before touching that list:
   `union` — the frame is centred on the grid by construction.
 - **The device row has no text at all** (icons only) and is the one entry addressed by
   `index`; a layout change will silently point it at another card.
-- **`state_on_off_on` / `_off` drive a real switch** (`HA_LAMP_ENTITY`, default
-  `switch.lumiere_wc`). The script records the state it found, sets what it needs, and puts it
-  back — including when a capture raises.
+- **Some components drive real devices.** `state_on_off_on` / `_off` toggle `HA_LAMP_ENTITY`;
+  the three cover shots drive `HA_COVER_ENTITY` through one open/close cycle. Every entity is
+  snapshotted the first time it is touched and restored in a `finally`, including when a
+  capture raises.
+- **Waiting for "not moving" is not enough** to know a cover arrived: it still reports its old
+  state a second or two after the command, so the first poll returns immediately. Wait for the
+  position itself — the first version of this reported a restore that had not happened yet.
+- **The moving state needs the page loaded *before* the command.** The dashboard follows the
+  state live, so reloading after starting the shutter would burn the whole travel inside
+  `HA_SETTLE_MS`. `glass_cover_moving` is captured as a GIF (`frames` / `interval_ms`).
 - **The theme background follows a weather entity, not the sun.** `weather.marseille` and
   `weather.senas` stay on `clear-night` for about an hour and a half after sunrise: capture too
   early and the glass sits on a night sky.
