@@ -212,13 +212,19 @@ Several of them inside a `glass_container` row:
 ![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.png)
 
 #### `glass_cover`
-Shutter/blind control with animation and position badge. The badge, the icon color and the left
-border all follow the current position — `fermé` at 0 %, `ouvert` at 100 %, the percentage in
-between, and `ouverture` / `fermeture` (with a pulsing icon) while the shutter is moving.
+Shutter/blind control with animation and position badge. The badge sits in the top-right corner
+— out of the way of the name, which long entity names used to run into — and it follows the
+current position along with the icon color and the left border: `fermé` at 0 %, `ouvert` at
+100 %, the percentage in between, and `ouverture` / `fermeture` (with a pulsing icon) while the
+shutter is moving.
 
-| 65 % open | 17 % open | closed |
+| part-way open | opening | closed |
 |:---:|:---:|:---:|
-| ![cover 65%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover.png) | ![cover 17%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_partial.png) | ![cover closed](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_closed.png) |
+| ![cover part-way open](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover.png) | ![cover opening](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_moving.gif) | ![cover closed](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_closed.png) |
+
+The middle one is the real thing, not a mock-up: the shutter was driven while the capture ran,
+so it shows the `mdi:window-shutter-alert` icon in `accent_moving`, the `ouverture` badge, and
+the icon pulsing at 1.5 s per cycle.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
