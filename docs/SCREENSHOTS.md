@@ -1,6 +1,22 @@
 # How to Capture Screenshots
 
-## Method 1: Browser DevTools (Recommended)
+## Method 0: the script (recommended)
+
+`scripts/capture_screenshots.py` drives Chromium through Playwright and writes both the view
+screenshots and the per-template crops, at `deviceScaleFactor=2`. It authenticates with a
+long-lived access token, and can relay through an SSH host when the machine running it has no
+route to Home Assistant. Read its docstring for the environment variables; the component part
+is documented at the bottom of this page.
+
+```bash
+pip install playwright && playwright install chromium
+HA_URL=http://homeassistant.local:8123 python3 scripts/capture_screenshots.py
+```
+
+The methods below are the manual fallbacks, for a one-off shot or an instance the script
+can't reach.
+
+## Method 1: Browser DevTools
 
 ### Desktop Screenshots (1920x1080)
 1. Open your HA dashboard in Chrome/Edge
@@ -80,42 +96,37 @@ Place all screenshots in:
 
 ## Component Crops (`docs/screenshots/components/`)
 
-The per-template close-ups used in the README's *Template Reference* are **crops of the
-committed full-view captures**, not separate captures:
-
-| Crop | Source | Region |
-|------|--------|--------|
-| `state_on_off_off.jpg` | `components/state_on_off.jpg` (2× session) | 3rd tile of the device row |
-| `state_on_off_on.jpg` | `home-view.jpg` (1×, upscaled ×2) | same tile, entity on |
-| `remote_view.jpg` | `remote-view.jpg` | `x 896–1280, y 60–612` (button grid centred) |
-| `field_templates.jpg` | left card of `field_templates_pair.jpg` | — |
-| `glass_cover_partial.jpg` | `components/glass_covers_row.jpg` | 2nd card (`x 254–508`) |
-| `glass_cover_closed.jpg` | `components/glass_covers_row.jpg` | 3rd card (`x 508–762`) |
-
-Gotchas for whoever redoes them:
-
-- The original **2× (`deviceScaleFactor=2`) capture session was never committed** — only its
-  crops were. So a crop that is truncated (as `remote_view.jpg` was) can only be redone from
-  the 1× full views, at half the pixel density.
-- The full views carry **baked-in annotation overlays** (labels, leader lines, a cyan highlight
-  rectangle around the remote card). Crop *inside* the highlight stroke, and check for leader
-  arrows landing on the UI — one had to be inpainted out of the `Noel` button.
-- HA (`home.home.arpa`, 192.168.4.50) is **not reachable from `ansible.home.arpa`** (ports
-  22/80/443/8123 all filtered), so live re-capture with the Playwright script below has to run
-  from a host on a VLAN that can reach it.
-- An on/off pair must be the **same entity**: `home-view.jpg` and `components/state_on_off.jpg`
-  come from different sessions and happen to have the 3rd tile in opposite states.
-- **No lit lightbulb exists in any committed capture** — the seven-lamp row is off in every one
-  of them, so the `state_on_off` pair uses the LED/socket tile instead. If you ever recapture,
-  switch one of those lamps on first: a bulb reads as on/off more immediately than an LED.
-
-## After Capturing
+The per-template close-ups used in the README's *Template Reference* are captured by the same
+script, one file per template, each cropped **by the browser from the card element itself**:
 
 ```bash
-cd ~/ha-glass-dashboard
-git add docs/screenshots/
-git commit -S -m "docs: add dashboard screenshots"
-git push origin main
+HA_URL=http://home.home.arpa HA_SSH_RELAY=root@node1.home.arpa \
+HA_SSH_TARGET=192.168.4.50:80 HA_COMPONENTS=1 HA_VIEWS_ONLY=0 \
+python3 scripts/capture_screenshots.py
+
+# un seul composant
+HA_ONLY="state_on_off_on state_on_off_off" ... python3 scripts/capture_screenshots.py
 ```
 
-Then update the README image references (they already point to `docs/screenshots/`).
+There are no coordinates to re-measure: the `COMPONENTS` list at the top of the script maps a
+name to a locator, and `pick` says which match to keep (`smallest` = the card itself,
+`largest` = the row it sits in, `union` = clip to a set of elements, `index` = position).
+
+Things worth knowing before touching that list:
+
+- **A `:has-text()` selector also matches every ancestor** containing the text, plus inner
+  labels — hence `pick`. `inner_text()` is empty on `button-card` (content lives in shadow
+  DOM), but `:has-text()` sees through it.
+- **Text must be unique enough.** `button-card:has-text("Garage")` matched a label inside a
+  sensor card; scoping it to the covers row (`hui-card:has(button-card:has-text("Baie vitr"))`)
+  fixed it. The same applies to `Cuisine`, which appears in both the lamp row and the covers.
+- **The remote panel is not a card** but eleven stacked `hui-grid-card` rows, so it uses
+  `union` — the frame is centred on the grid by construction.
+- **The device row has no text at all** (icons only) and is the one entry addressed by
+  `index`; a layout change will silently point it at another card.
+- **`state_on_off_on` / `_off` drive a real switch** (`HA_LAMP_ENTITY`, default
+  `switch.lumiere_wc`). The script records the state it found, sets what it needs, and puts it
+  back — including when a capture raises.
+- **The theme background follows a weather entity, not the sun.** `weather.marseille` and
+  `weather.senas` stay on `clear-night` for about an hour and a half after sunrise: capture too
+  early and the glass sits on a night sky.

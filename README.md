@@ -178,7 +178,7 @@ Or use [decluttering-card](https://github.com/custom-cards/decluttering-card) fo
 #### `glass_climate`
 Full HVAC control widget with power button, temperature display, up/down controls, and status.
 
-![glass_climate](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_climate.jpg)
+![glass_climate](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_climate.png)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -188,7 +188,7 @@ Full HVAC control widget with power button, temperature display, up/down control
 #### `glass_container`
 Horizontal-stack wrapper with glass effect. Use as a row container for multiple sub-cards (sensors, device buttons, etc.).
 
-![glass_container](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_container_sensors.jpg)
+![glass_container](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_container_sensors.png)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -199,7 +199,7 @@ Visual state feedback with colored icon when entity is on. Combine with `glass_c
 
 | `on` | `off` |
 |:----:|:-----:|
-| ![state_on_off on](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_on.jpg) | ![state_on_off off](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_off.jpg) |
+| ![state_on_off on](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_on.png) | ![state_on_off off](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off_off.png) |
 
 Same button, both states — the icon turns amber and the tile brightens when the entity is on.
 
@@ -209,7 +209,7 @@ Same button, both states — the icon turns amber and the tile brightens when th
 
 Several of them inside a `glass_container` row:
 
-![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.jpg)
+![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.png)
 
 #### `glass_cover`
 Shutter/blind control with animation and position badge. The badge, the icon color and the left
@@ -218,7 +218,7 @@ between, and `ouverture` / `fermeture` (with a pulsing icon) while the shutter i
 
 | 65 % open | 17 % open | closed |
 |:---:|:---:|:---:|
-| ![cover 65%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover.jpg) | ![cover 17%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_partial.jpg) | ![cover closed](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_closed.jpg) |
+| ![cover 65%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover.png) | ![cover 17%](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_partial.png) | ![cover closed](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_cover_closed.png) |
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -234,7 +234,7 @@ Garage door control. The card is driven by **two entities**: a contact sensor gi
 (icon, color, left border), and a script does the action — a garage motor is a dry-contact pulse,
 not a switch, so the card can't just toggle the sensor.
 
-![glass_garage](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_garage.jpg)
+![glass_garage](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/glass_garage.png)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -251,11 +251,11 @@ Composable sub-components for building sensor/monitoring cards. Combine `field_g
 
 A single card — title, sparkline, secondary value and command buttons:
 
-![field_templates](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates.jpg)
+![field_templates](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates.png)
 
 Two of them side by side in a row:
 
-![field_templates pair](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates_pair.jpg)
+![field_templates pair](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/field_templates_pair.png)
 
 #### `field_graph`
 Inline mini-graph-card sparkline.
@@ -274,7 +274,7 @@ Up to 3 toggle/command buttons inside a card.
 #### `badge_status`
 Compact status indicator pill — shows entity state as a small colored badge in the view header.
 
-![badge_status](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_status.jpg)
+![badge_status](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_status.png)
 
 ### Remote Buttons
 
@@ -282,7 +282,7 @@ Compact status indicator pill — shows entity state as a small colored badge in
 Colored button for remote control grids. Compact 4-column layout designed for IR/RF remotes.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/remote_view.jpg" alt="remote_view" width="384">
+  <img src="https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/remote_view.png" alt="remote_view" width="384">
 </p>
 
 | Variable | Default | Description |
