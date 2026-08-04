@@ -277,17 +277,27 @@ Up to 3 toggle/command buttons inside a card.
 
 ### Badges
 
-The circles in the view header. `badge_base` gives them their shape; the four templates below
-put the state logic on top, so a badge is a card with a handful of `variables` rather than a
-page of inline JavaScript. Anything drawn outside the circle — a countdown, a power reading —
-is a `custom_field`, which is why those templates set `overflow: visible` on the card.
+The circles in the view header. They are four pieces that stack, so a badge is a card with a
+handful of `variables` rather than a page of inline JavaScript:
+
+| | |
+|---|---|
+| `badge_base` | the shape — and the `badge-pulse` keyframes the others animate with |
+| `badge_status` | on/off colors |
+| `badge_power` | the power pill |
+| `badge_appliance` / `badge_health` | a whole behaviour, built on the pieces above |
+
+`badge_power` carries nothing but the pill, so it combines: `template: [badge_status,
+badge_power]` is an on/off badge that reads a wattage, and `badge_appliance` picks up the same
+pill without redefining it. Anything drawn outside the circle is a `custom_field`, which is
+why `badge_power` sets `overflow: visible` on the card.
 
 ![badge row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_row.png)
 
 | doorbell | remote | washing machine | borehole pump |
 |:---:|:---:|:---:|:---:|
 | ![doorbell badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_doorbell.png) | ![remote badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_remote.png) | ![washing machine badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_washer.png) | ![pump badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_pump.png) |
-| `badge_health` | `badge_status` | `badge_appliance` | `badge_power` |
+| `badge_health` | `badge_status` | `badge_appliance` | `badge_status` + `badge_power` |
 
 Four badges out of the header above, each shot on its own, in the state they happened to be
 in. The doorbell is on with its relay unreachable — hence the orange circle instead of the
@@ -298,9 +308,12 @@ follows the plug. Both it and the pump read the power being drawn, and the washi
 swaps in the time left once a cycle starts.
 
 #### `badge_base`
-Shape only, no state: a 36 px circle with a drop shadow and a transition on every property.
-Build on it either by driving the colors yourself, or by combining it with a `state_*` template
-— `badge_pompe` in `glass-devices-example.yaml` is exactly `state_pompe` + `badge_base`.
+Shape only, no state: a 36 px circle with a drop shadow and a transition on every property. It
+also holds the `badge-pulse` keyframes, so anything built on it can pulse by naming that
+animation. Build on it either by driving the colors yourself, or by combining it with a
+`state_*` template — `badge_pompe` in `glass-devices-example.yaml` is exactly `state_pompe` +
+`badge_base`. Note that `extra_styles` replaces rather than merges: a card that declares its
+own has to re-declare the keyframes.
 
 #### `badge_status`
 On/off badge — swaps background, left border and icon on state, and can pulse while on.
@@ -343,20 +356,25 @@ variables:
 ```
 
 #### `badge_power`
-`badge_status` plus a pill in the corner with the power being drawn. The pill disappears while
-the badge is off, or when the sensor holds anything that is not a number.
+A pill in the corner with the power being drawn, and nothing else — no colors, no shape. It is
+meant to be stacked on a badge that has those: `[badge_status, badge_power]` for an on/off
+device, and `badge_appliance` pulls it in the same way. The pill disappears while the badge is
+off, or when the sensor holds anything that is not a number.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `power_entity` | — | Sensor read for the pill |
 | `power_bg` | `rgba(0,0,0,0.55)` | Pill background |
 
-Everything `badge_status` takes still applies. The pump badge above:
+The pump badge above — `badge_status` for the colors, `badge_power` for the pill, so both sets
+of variables apply:
 
 ```yaml
 type: custom:button-card
 entity: switch.pompe_forage
-template: badge_power
+template:
+  - badge_status
+  - badge_power
 size: 75%
 variables:
   power_entity: sensor.pompe_forage_power
@@ -377,7 +395,9 @@ variables:
 #### `badge_appliance`
 An appliance behind a plug: the badge follows the switch *and* a machine-state sensor, so it
 has four looks — unplugged, idle, running, paused — and carries both the time left and the
-power drawn. Nothing but the dark circle shows while the plug is off.
+power drawn. Nothing but the dark circle shows while the plug is off. It is built on
+`badge_base` + `badge_power`, so `power_entity` and `power_bg` come from that table above and
+are not repeated here.
 
 The two follow different things on purpose. The circle is the plug — dark when it is cut,
 colored as soon as it feeds the machine. The icon is the machine: it stays crossed out until a
@@ -389,14 +409,13 @@ cycle actually runs, so a green circle with a crossed-out drum reads "powered, d
 | `run_states` | `["run"]` | Values of that sensor that count as running |
 | `pause_states` | `["pause"]` | Values that count as paused |
 | `finish_entity` | — | Timestamp sensor for the end of the cycle |
-| `power_entity` | — | Sensor read for the power pill |
 | `gradient_off` / `_idle` / `_run` / `_pause` | dark / green / teal / orange | Background per look |
 | `border_off` / `_idle` / `_run` / `_pause` | `3px solid …` | Left border per look |
 | `glow_off` / `_idle` / `_run` / `_pause` | `grayscale…` / `drop-shadow…` | Icon `filter` per look |
 | `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon while a cycle runs / any other time |
 | `pulse_animation` | `badge-pulse 1.5s ease-in-out infinite` | Animation while running |
 | `pulse_from` / `pulse_to` | teal | The two glow colors of `badge-pulse` |
-| `countdown_bg` / `power_bg` | teal / green | Pill backgrounds |
+| `countdown_bg` | `rgba(0, 105, 92, 0.9)` | Countdown pill background (`power_bg` defaults to green here) |
 
 The defaults are the washing machine above, so it comes down to the three sensors:
 

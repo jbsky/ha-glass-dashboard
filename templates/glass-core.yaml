@@ -948,7 +948,8 @@
           "transition": "all 0.3s ease-in-out"
         }
       ]
-    }
+    },
+    "extra_styles": "\n@keyframes badge-pulse {\n  0%, 100% { box-shadow: 0 0 10px 2px var(--badge-pulse-from, rgba(255,255,255,0.35)); }\n  50%      { box-shadow: 0 0 18px 5px var(--badge-pulse-to, rgba(255,255,255,0.6)); }\n}\n"
   },
   "badge_status": {
     "variables": {
@@ -968,21 +969,6 @@
     },
     "styles": {
       "card": [
-        {
-          "height": "36px"
-        },
-        {
-          "width": "36px"
-        },
-        {
-          "border-radius": "100%"
-        },
-        {
-          "transition": "all 0.3s ease-in-out"
-        },
-        {
-          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
-        },
         {
           "--badge-pulse-from": "[[[ return variables.pulse_from ]]]"
         },
@@ -1049,13 +1035,12 @@
         }
       }
     ],
-    "extra_styles": "\n@keyframes badge-pulse {\n  0%, 100% { box-shadow: 0 0 10px 2px var(--badge-pulse-from, rgba(255,255,255,0.35)); }\n  50%      { box-shadow: 0 0 18px 5px var(--badge-pulse-to, rgba(255,255,255,0.6)); }\n}\n",
+    "template": "badge_base",
     "show_name": false,
     "show_state": false,
     "show_icon": true
   },
   "badge_power": {
-    "template": "badge_status",
     "variables": {
       "power_entity": "",
       "power_bg": "rgba(0,0,0,0.55)"
@@ -1113,6 +1098,10 @@
     }
   },
   "badge_appliance": {
+    "template": [
+      "badge_base",
+      "badge_power"
+    ],
     "variables": {
       "state_entity": "",
       "finish_entity": "",
@@ -1149,29 +1138,10 @@
     "icon": "[[[\n  if (entity.state !== 'on') return variables.icon_off;\n  if (!variables.state_entity) return variables.icon_on;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  return (variables.run_states || []).includes(v) ? variables.icon_on : variables.icon_off;\n]]]",
     "triggers_update": "[[[\n  return [entity ? entity.entity_id : null, variables.state_entity,\n          variables.finish_entity, variables.power_entity].filter(Boolean);\n]]]",
     "custom_fields": {
-      "countdown": "[[[\n  if (entity.state !== 'on') return '';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return '';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]",
-      "power_indicator": "[[[\n  if (entity.state !== 'on') return '';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  if (!s || isNaN(Number(s.state))) return '';\n  return `${Math.round(Number(s.state))}W`;\n]]]"
+      "countdown": "[[[\n  if (entity.state !== 'on') return '';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return '';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]"
     },
     "styles": {
       "card": [
-        {
-          "height": "36px"
-        },
-        {
-          "width": "36px"
-        },
-        {
-          "border-radius": "100%"
-        },
-        {
-          "transition": "all 0.3s ease-in-out"
-        },
-        {
-          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
-        },
-        {
-          "overflow": "visible"
-        },
         {
           "--badge-pulse-from": "[[[ return variables.pulse_from ]]]"
         },
@@ -1240,47 +1210,14 @@
         ],
         "power_indicator": [
           {
-            "position": "absolute"
-          },
-          {
-            "bottom": "-2px"
-          },
-          {
             "right": "-6px"
-          },
-          {
-            "background": "[[[ return variables.power_bg ]]]"
-          },
-          {
-            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  return (!s || isNaN(Number(s.state))) ? 'none' : 'block';\n]]]"
-          },
-          {
-            "border-radius": "8px"
-          },
-          {
-            "padding": "1px 5px"
-          },
-          {
-            "font-size": "9px"
-          },
-          {
-            "font-weight": "bold"
-          },
-          {
-            "color": "#fff"
-          },
-          {
-            "text-shadow": "0 0 3px rgba(0,0,0,0.5)"
-          },
-          {
-            "min-width": "0"
           }
         ]
       }
-    },
-    "extra_styles": "\n@keyframes badge-pulse {\n  0%, 100% { box-shadow: 0 0 10px 2px var(--badge-pulse-from, rgba(255,255,255,0.35)); }\n  50%      { box-shadow: 0 0 18px 5px var(--badge-pulse-to, rgba(255,255,255,0.6)); }\n}\n"
+    }
   },
   "badge_health": {
+    "template": "badge_base",
     "variables": {
       "watch_entity": "",
       "icon_on": "mdi:bell-ring",
@@ -1308,21 +1245,6 @@
     },
     "styles": {
       "card": [
-        {
-          "height": "36px"
-        },
-        {
-          "width": "36px"
-        },
-        {
-          "border-radius": "100%"
-        },
-        {
-          "transition": "all 0.3s ease-in-out"
-        },
-        {
-          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
-        },
         {
           "background": "[[[\n  if (entity.state !== 'on') return variables.gradient_off;\n\n  const w = variables.watch_entity ? states[variables.watch_entity] : null;\n  const down = !w || w.state === 'unavailable' || w.state === 'unknown';\n  return down ? variables.gradient_alert : variables.gradient_on;\n]]]"
         },
