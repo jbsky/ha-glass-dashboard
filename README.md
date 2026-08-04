@@ -14,7 +14,7 @@ A stunning glass-morphism theme with **weather-reactive backgrounds** and a comp
 |---------|--------------------:|-------------:|------------------:|
 | Glass-morphism | Theme only | No | Theme + per-card |
 | Dynamic backgrounds | No | No | 15 weather conditions |
-| Button-card templates | No | Config dump | 33 reusable templates |
+| Button-card templates | No | Config dump | 36 reusable templates |
 | Sun-aware (day/night) | No | No | Yes |
 | Multi-view themes | No | No | Yes (tech, remote) |
 | Remote control layout | No | No | Compact 4-col grid |
@@ -34,7 +34,7 @@ Every card gets a frosted glass effect via `card-mod`:
 - Subtle light borders
 - Consistent across all card types
 
-### 33 Button-Card Templates
+### 36 Button-Card Templates
 A complete template library organized by function:
 
 | Category | Templates | Purpose |
@@ -45,7 +45,7 @@ A complete template library organized by function:
 | **States** | `state_on_off`, `animation_effects` | Visual state feedback |
 | **Sensors** | `battery_level`, `humidity_template`, `temperature_template` | Sensor display |
 | **Remote** | `remote_button`, `remote_separator` | IR/RF remote grid |
-| **Badges** | `badge_base`, `badge_status` | Status indicators |
+| **Badges** | `badge_base`, `badge_status`, `badge_power`, `badge_appliance`, `badge_health` | Status indicators |
 
 ### Climate Widget (`glass_climate`)
 A self-contained HVAC component with:
@@ -277,30 +277,32 @@ Up to 3 toggle/command buttons inside a card.
 
 ### Badges
 
-The circles in the view header. `badge_base` gives them their shape, each badge puts its own
-state logic on top, and anything extra — a countdown, a power reading — is a `custom_field`
-placed outside the circle.
+The circles in the view header. `badge_base` gives them their shape; the four templates below
+put the state logic on top, so a badge is a card with a handful of `variables` rather than a
+page of inline JavaScript. Anything drawn outside the circle — a countdown, a power reading —
+is a `custom_field`, which is why those templates set `overflow: visible` on the card.
 
 ![badge row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_row.png)
+
+| doorbell | remote | washing machine | borehole pump |
+|:---:|:---:|:---:|:---:|
+| ![doorbell badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_doorbell.png) | ![remote badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_remote.png) | ![washing machine badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_washer.png) | ![pump badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_pump.png) |
+| `badge_health` | `badge_status` | `badge_appliance` | `badge_power` |
+
+Four badges out of the header above, each shot on its own, in the state they happened to be
+in. The doorbell is on with its relay unreachable — hence the orange circle instead of the
+yellow one, and the red dot in the corner; by the time the row above was shot it had been
+switched off, which is the grey circle. The washing machine is plugged in but idle and the pump
+is on, so both pills read the power being drawn; the washing machine swaps in the time left
+once a cycle starts.
 
 #### `badge_base`
 Shape only, no state: a 36 px circle with a drop shadow and a transition on every property.
 Build on it either by driving the colors yourself, or by combining it with a `state_*` template
 — `badge_pompe` in `glass-devices-example.yaml` is exactly `state_pompe` + `badge_base`.
 
-| doorbell | remote | washing machine | borehole pump |
-|:---:|:---:|:---:|:---:|
-| ![doorbell badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_doorbell.png) | ![remote badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_remote.png) | ![washing machine badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_washer.png) | ![pump badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_pump.png) |
-
-Four badges out of the header above, each shot on its own. The first two are `badge_base` with a
-gradient driven by the entity state. The last two add a `custom_field`, the pill under the
-circle: both show the power being drawn, and the washing machine swaps in the time left once a
-cycle is running — neither was, here. A `custom_field` sits outside the circle, so a badge that
-carries one needs `overflow: visible` on its card.
-
 #### `badge_status`
-Ready-made on/off variant of `badge_base` — swaps background, left border and icon on state,
-and can pulse while on.
+On/off badge — swaps background, left border and icon on state, and can pulse while on.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -310,7 +312,139 @@ and can pulse while on.
 | `border_off` | `3px solid #37474F` | Left border when off |
 | `icon_on` | `mdi:power` | Icon when on |
 | `icon_off` | `mdi:power-off` | Icon when off |
+| `icon_color_on` | `#FFFFFF` | Icon color when on |
+| `icon_color_off` | `#CFD8DC` | Icon color when off |
+| `glow_on` | `drop-shadow(0 0 4px rgba(255,255,255,0.5))` | Icon `filter` when on |
+| `glow_off` | `none` | Icon `filter` when off |
 | `pulse_animation` | `none` | CSS animation applied while on |
+| `pulse_from` / `pulse_to` | `rgba(255,255,255,0.35)` / `rgba(255,255,255,0.6)` | The two glow colors of `badge-pulse`, the keyframes shipped with the template |
+
+The remote badge above, in full:
+
+```yaml
+type: custom:button-card
+entity: remote.rm4pro
+template: badge_status
+size: 75%
+tap_action:
+  action: navigate
+  navigation_path: /lovelace/telecommande
+variables:
+  icon_on: mdi:remote-tv
+  icon_off: mdi:remote-tv
+  gradient_on: linear-gradient(135deg, #1565C0, #42A5F5)
+  gradient_off: linear-gradient(135deg, #616161, #9E9E9E)
+  border_on: 3px solid #0D47A1
+  border_off: 3px solid #424242
+  glow_on: drop-shadow(0 0 4px rgba(21, 101, 192, 0.8))
+  glow_off: grayscale(100%)
+  icon_color_off: "#FFFFFF"
+```
+
+#### `badge_power`
+`badge_status` plus a pill in the corner with the power being drawn. The pill disappears while
+the badge is off, or when the sensor holds anything that is not a number.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `power_entity` | — | Sensor read for the pill |
+| `power_bg` | `rgba(0,0,0,0.55)` | Pill background |
+
+Everything `badge_status` takes still applies. The pump badge above:
+
+```yaml
+type: custom:button-card
+entity: switch.pompe_forage
+template: badge_power
+size: 75%
+variables:
+  power_entity: sensor.pompe_forage_power
+  power_bg: rgba(1, 87, 155, 0.85)
+  icon_on: mdi:pump
+  icon_off: mdi:pump-off
+  gradient_on: linear-gradient(135deg, #0288D1, #4FC3F7)
+  gradient_off: linear-gradient(135deg, #546E7A, #90A4AE)
+  border_on: 3px solid #01579B
+  border_off: 3px solid #37474F
+  glow_on: drop-shadow(0 0 6px rgba(2, 136, 209, 0.8))
+  glow_off: grayscale(80%)
+  pulse_animation: badge-pulse 2s ease-in-out infinite
+  pulse_from: rgba(2, 136, 209, 0.4)
+  pulse_to: rgba(79, 195, 247, 0.7)
+```
+
+#### `badge_appliance`
+An appliance behind a plug: the badge follows the switch *and* a machine-state sensor, so it
+has four looks — unplugged, idle, running, paused — and carries both the time left and the
+power drawn. Nothing but the dark circle shows while the plug is off.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `state_entity` | — | Machine-state sensor |
+| `run_states` | `["run"]` | Values of that sensor that count as running |
+| `pause_states` | `["pause"]` | Values that count as paused |
+| `finish_entity` | — | Timestamp sensor for the end of the cycle |
+| `power_entity` | — | Sensor read for the power pill |
+| `gradient_off` / `_idle` / `_run` / `_pause` | dark / green / teal / orange | Background per look |
+| `border_off` / `_idle` / `_run` / `_pause` | `3px solid …` | Left border per look |
+| `glow_off` / `_idle` / `_run` / `_pause` | `grayscale…` / `drop-shadow…` | Icon `filter` per look |
+| `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon |
+| `pulse_animation` | `badge-pulse 1.5s ease-in-out infinite` | Animation while running |
+| `pulse_from` / `pulse_to` | teal | The two glow colors of `badge-pulse` |
+| `countdown_bg` / `power_bg` | teal / green | Pill backgrounds |
+
+The defaults are the washing machine above, so it comes down to the three sensors:
+
+```yaml
+type: custom:button-card
+entity: switch.lave_linge_2
+template: badge_appliance
+size: 75%
+tap_action:
+  action: more-info
+  entity: sensor.lave_linge_washer_machine_state
+variables:
+  state_entity: sensor.lave_linge_washer_machine_state
+  finish_entity: sensor.lave_linge_washer_completion_time
+  power_entity: sensor.lave_linge_power
+```
+
+The countdown reads the completion time as an absolute timestamp and prints what is left:
+`45m`, then `1h30`. It only refreshes when one of the entities in `triggers_update` moves, so
+a machine that reports nothing for ten minutes shows a countdown ten minutes stale.
+
+#### `badge_health`
+On/off badge that also watches the relay, bridge or gateway the device hangs off. While that
+companion entity is `unavailable` the circle turns to `gradient_alert` and the corner dot flips
+to `link_icon_down` — the device still answers, but you can see the link behind it is down.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `watch_entity` | — | Companion entity whose availability is watched |
+| `gradient_on` / `_off` / `_alert` | yellow / grey / orange | Background per look |
+| `border_on` / `_off` / `_alert` | `3px solid …` | Left border per look |
+| `icon_on` / `icon_off` | `mdi:bell-ring` / `mdi:bell-off` | Icon |
+| `glow_on` / `glow_off` | `drop-shadow…` / `grayscale…` | Icon `filter` |
+| `link_icon_up` / `link_icon_down` | `mdi:wifi` / `mdi:wifi-off` | Corner dot |
+| `link_color_up` / `link_color_down` | `#4caf50` / `#f44336` | Corner dot color |
+
+The doorbell above — the defaults are its colors, so only the companion is left to name:
+
+```yaml
+type: custom:button-card
+entity: switch.sonnette
+template: badge_health
+size: 75%
+tap_action:
+  action: toggle
+double_tap_action:
+  action: call-service
+  service: button.press
+  service_data:
+    entity_id: button.doorbell_relay_doorbell_ring
+variables:
+  watch_entity: button.doorbell_relay_doorbell_ring
+```
 
 ### Remote Buttons
 

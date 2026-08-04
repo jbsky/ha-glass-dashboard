@@ -958,7 +958,13 @@
       "border_off": "3px solid #37474F",
       "icon_on": "mdi:power",
       "icon_off": "mdi:power-off",
-      "pulse_animation": "none"
+      "pulse_animation": "none",
+      "icon_color_on": "#FFFFFF",
+      "icon_color_off": "#CFD8DC",
+      "glow_on": "drop-shadow(0 0 4px rgba(255,255,255,0.5))",
+      "glow_off": "none",
+      "pulse_from": "rgba(255,255,255,0.35)",
+      "pulse_to": "rgba(255,255,255,0.6)"
     },
     "styles": {
       "card": [
@@ -976,6 +982,12 @@
         },
         {
           "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
+        },
+        {
+          "--badge-pulse-from": "[[[ return variables.pulse_from ]]]"
+        },
+        {
+          "--badge-pulse-to": "[[[ return variables.pulse_to ]]]"
         }
       ],
       "icon": [
@@ -1002,10 +1014,10 @@
           ],
           "icon": [
             {
-              "color": "#FFFFFF"
+              "color": "[[[ return variables.icon_color_on ]]]"
             },
             {
-              "filter": "drop-shadow(0 0 4px rgba(255,255,255,0.5))"
+              "filter": "[[[ return variables.glow_on ]]]"
             }
           ]
         }
@@ -1025,15 +1037,324 @@
           ],
           "icon": [
             {
-              "color": "#CFD8DC"
+              "color": "[[[ return variables.icon_color_off ]]]"
             },
             {
               "opacity": 0.8
+            },
+            {
+              "filter": "[[[ return variables.glow_off ]]]"
             }
           ]
         }
       }
-    ]
+    ],
+    "extra_styles": "\n@keyframes badge-pulse {\n  0%, 100% { box-shadow: 0 0 10px 2px var(--badge-pulse-from, rgba(255,255,255,0.35)); }\n  50%      { box-shadow: 0 0 18px 5px var(--badge-pulse-to, rgba(255,255,255,0.6)); }\n}\n",
+    "show_name": false,
+    "show_state": false,
+    "show_icon": true
+  },
+  "badge_power": {
+    "template": "badge_status",
+    "variables": {
+      "power_entity": "",
+      "power_bg": "rgba(0,0,0,0.55)"
+    },
+    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null,\n          variables.power_entity].filter(Boolean);\n]]]",
+    "custom_fields": {
+      "power_indicator": "[[[\n  if (entity.state !== 'on') return '';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  if (!s || isNaN(Number(s.state))) return '';\n  return `${Math.round(Number(s.state))}W`;\n]]]"
+    },
+    "styles": {
+      "card": [
+        {
+          "overflow": "visible"
+        }
+      ],
+      "custom_fields": {
+        "power_indicator": [
+          {
+            "position": "absolute"
+          },
+          {
+            "bottom": "-2px"
+          },
+          {
+            "right": "-2px"
+          },
+          {
+            "background": "[[[ return variables.power_bg ]]]"
+          },
+          {
+            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  return (!s || isNaN(Number(s.state))) ? 'none' : 'block';\n]]]"
+          },
+          {
+            "border-radius": "8px"
+          },
+          {
+            "padding": "1px 5px"
+          },
+          {
+            "font-size": "9px"
+          },
+          {
+            "font-weight": "bold"
+          },
+          {
+            "color": "#fff"
+          },
+          {
+            "text-shadow": "0 0 3px rgba(0,0,0,0.5)"
+          },
+          {
+            "min-width": "0"
+          }
+        ]
+      }
+    }
+  },
+  "badge_appliance": {
+    "variables": {
+      "state_entity": "",
+      "finish_entity": "",
+      "power_entity": "",
+      "run_states": [
+        "run"
+      ],
+      "pause_states": [
+        "pause"
+      ],
+      "icon_on": "mdi:washing-machine",
+      "icon_off": "mdi:washing-machine-off",
+      "gradient_off": "linear-gradient(135deg, #424242, #616161)",
+      "gradient_idle": "linear-gradient(135deg, #43A047, #81C784)",
+      "gradient_run": "linear-gradient(135deg, #00897B, #4DB6AC)",
+      "gradient_pause": "linear-gradient(135deg, #F57C00, #FFB74D)",
+      "border_off": "3px solid #212121",
+      "border_idle": "3px solid #2E7D32",
+      "border_run": "3px solid #00695C",
+      "border_pause": "3px solid #E65100",
+      "glow_off": "grayscale(100%) opacity(0.6)",
+      "glow_idle": "drop-shadow(0 0 3px rgba(46, 125, 50, 0.5))",
+      "glow_run": "drop-shadow(0 0 5px rgba(0, 137, 123, 0.8))",
+      "glow_pause": "drop-shadow(0 0 5px rgba(245, 124, 0, 0.8))",
+      "pulse_animation": "badge-pulse 1.5s ease-in-out infinite",
+      "pulse_from": "rgba(0, 137, 123, 0.4)",
+      "pulse_to": "rgba(77, 182, 172, 0.7)",
+      "countdown_bg": "rgba(0, 105, 92, 0.9)",
+      "power_bg": "rgba(46, 125, 50, 0.85)"
+    },
+    "show_name": false,
+    "show_state": false,
+    "show_icon": true,
+    "icon": "[[[\n  return entity.state === 'on' ? variables.icon_on : variables.icon_off;\n]]]",
+    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null, variables.state_entity,\n          variables.finish_entity, variables.power_entity].filter(Boolean);\n]]]",
+    "custom_fields": {
+      "countdown": "[[[\n  if (entity.state !== 'on') return '';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return '';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]",
+      "power_indicator": "[[[\n  if (entity.state !== 'on') return '';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  if (!s || isNaN(Number(s.state))) return '';\n  return `${Math.round(Number(s.state))}W`;\n]]]"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "36px"
+        },
+        {
+          "width": "36px"
+        },
+        {
+          "border-radius": "100%"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
+        },
+        {
+          "overflow": "visible"
+        },
+        {
+          "--badge-pulse-from": "[[[ return variables.pulse_from ]]]"
+        },
+        {
+          "--badge-pulse-to": "[[[ return variables.pulse_to ]]]"
+        },
+        {
+          "background": "[[[\n  if (entity.state !== 'on') return variables.gradient_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.gradient_run;\n  if ((variables.pause_states || []).includes(v)) return variables.gradient_pause;\n  return variables.gradient_idle;\n]]]"
+        },
+        {
+          "border-left": "[[[\n  if (entity.state !== 'on') return variables.border_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.border_run;\n  if ((variables.pause_states || []).includes(v)) return variables.border_pause;\n  return variables.border_idle;\n]]]"
+        },
+        {
+          "animation": "[[[\n  if (entity.state !== 'on') return 'none';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  return (variables.run_states || []).includes(v)\n    ? variables.pulse_animation : 'none';\n]]]"
+        }
+      ],
+      "icon": [
+        {
+          "color": "#FFFFFF"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "filter": "[[[\n  if (entity.state !== 'on') return variables.glow_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.glow_run;\n  if ((variables.pause_states || []).includes(v)) return variables.glow_pause;\n  return variables.glow_idle;\n]]]"
+        }
+      ],
+      "custom_fields": {
+        "countdown": [
+          {
+            "position": "absolute"
+          },
+          {
+            "bottom": "-4px"
+          },
+          {
+            "left": "-6px"
+          },
+          {
+            "background": "[[[ return variables.countdown_bg ]]]"
+          },
+          {
+            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return 'none';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  return isNaN(end) ? 'none' : 'block';\n]]]"
+          },
+          {
+            "border-radius": "8px"
+          },
+          {
+            "padding": "1px 5px"
+          },
+          {
+            "font-size": "9px"
+          },
+          {
+            "font-weight": "bold"
+          },
+          {
+            "color": "#fff"
+          },
+          {
+            "text-shadow": "0 0 3px rgba(0,0,0,0.5)"
+          },
+          {
+            "min-width": "0"
+          }
+        ],
+        "power_indicator": [
+          {
+            "position": "absolute"
+          },
+          {
+            "bottom": "-2px"
+          },
+          {
+            "right": "-6px"
+          },
+          {
+            "background": "[[[ return variables.power_bg ]]]"
+          },
+          {
+            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n  const s = variables.power_entity ? states[variables.power_entity] : null;\n  return (!s || isNaN(Number(s.state))) ? 'none' : 'block';\n]]]"
+          },
+          {
+            "border-radius": "8px"
+          },
+          {
+            "padding": "1px 5px"
+          },
+          {
+            "font-size": "9px"
+          },
+          {
+            "font-weight": "bold"
+          },
+          {
+            "color": "#fff"
+          },
+          {
+            "text-shadow": "0 0 3px rgba(0,0,0,0.5)"
+          },
+          {
+            "min-width": "0"
+          }
+        ]
+      }
+    },
+    "extra_styles": "\n@keyframes badge-pulse {\n  0%, 100% { box-shadow: 0 0 10px 2px var(--badge-pulse-from, rgba(255,255,255,0.35)); }\n  50%      { box-shadow: 0 0 18px 5px var(--badge-pulse-to, rgba(255,255,255,0.6)); }\n}\n"
+  },
+  "badge_health": {
+    "variables": {
+      "watch_entity": "",
+      "icon_on": "mdi:bell-ring",
+      "icon_off": "mdi:bell-off",
+      "gradient_on": "linear-gradient(135deg, #fabe07, #fcf525)",
+      "gradient_off": "linear-gradient(135deg, #616161, #9E9E9E)",
+      "gradient_alert": "linear-gradient(135deg, #E65100, #FF8F00)",
+      "border_on": "3px solid #F9A825",
+      "border_off": "3px solid #424242",
+      "border_alert": "3px solid #BF360C",
+      "glow_on": "drop-shadow(0 0 4px rgba(255, 193, 7, 0.8))",
+      "glow_off": "grayscale(100%) opacity(0.7)",
+      "link_icon_up": "mdi:wifi",
+      "link_icon_down": "mdi:wifi-off",
+      "link_color_up": "#4caf50",
+      "link_color_down": "#f44336"
+    },
+    "show_name": false,
+    "show_state": false,
+    "show_icon": true,
+    "icon": "[[[\n  return entity.state === 'on' ? variables.icon_on : variables.icon_off;\n]]]",
+    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null,\n          variables.watch_entity].filter(Boolean);\n]]]",
+    "custom_fields": {
+      "link_status": "[[[\n  const w = variables.watch_entity ? states[variables.watch_entity] : null;\n  const down = !w || w.state === 'unavailable' || w.state === 'unknown';\n\n  const icon = down ? variables.link_icon_down : variables.link_icon_up;\n  const color = down ? variables.link_color_down : variables.link_color_up;\n  return `<ha-icon icon=\"${icon}\" style=\"--mdc-icon-size:10px;color:${color};\"></ha-icon>`;\n]]]"
+    },
+    "styles": {
+      "card": [
+        {
+          "height": "36px"
+        },
+        {
+          "width": "36px"
+        },
+        {
+          "border-radius": "100%"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "box-shadow": "0 0 10px 2px rgba(0,0,0,0.2)"
+        },
+        {
+          "background": "[[[\n  if (entity.state !== 'on') return variables.gradient_off;\n\n  const w = variables.watch_entity ? states[variables.watch_entity] : null;\n  const down = !w || w.state === 'unavailable' || w.state === 'unknown';\n  return down ? variables.gradient_alert : variables.gradient_on;\n]]]"
+        },
+        {
+          "border-left": "[[[\n  if (entity.state !== 'on') return variables.border_off;\n\n  const w = variables.watch_entity ? states[variables.watch_entity] : null;\n  const down = !w || w.state === 'unavailable' || w.state === 'unknown';\n  return down ? variables.border_alert : variables.border_on;\n]]]"
+        }
+      ],
+      "icon": [
+        {
+          "color": "#FFFFFF"
+        },
+        {
+          "transition": "all 0.3s ease-in-out"
+        },
+        {
+          "filter": "[[[\n  return entity.state === 'on' ? variables.glow_on : variables.glow_off;\n]]]"
+        }
+      ],
+      "custom_fields": {
+        "link_status": [
+          {
+            "position": "absolute"
+          },
+          {
+            "top": "-3px"
+          },
+          {
+            "right": "-3px"
+          }
+        ]
+      }
+    }
   },
   "field_command": {
     "type": "custom:button-card",
