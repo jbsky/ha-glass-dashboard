@@ -293,10 +293,10 @@ Build on it either by driving the colors yourself, or by combining it with a `st
 | ![doorbell badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_doorbell.png) | ![remote badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_remote.png) | ![washing machine badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_washer.png) | ![pump badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_pump.png) |
 
 Four badges out of the header above, each shot on its own. The first two are `badge_base` with a
-gradient driven by the entity state. The last two add a `custom_field`: the washing machine
-shows what it is drawing, and the time left while a cycle runs; the pump shows its power. Those
-indicators are drawn outside the circle, so a badge that carries one needs `overflow: visible`
-on its card.
+gradient driven by the entity state. The last two add a `custom_field`, the pill under the
+circle: both show the power being drawn, and the washing machine swaps in the time left once a
+cycle is running — neither was, here. A `custom_field` sits outside the circle, so a badge that
+carries one needs `overflow: visible` on its card.
 
 #### `badge_status`
 Ready-made on/off variant of `badge_base` — swaps background, left border and icon on state,
