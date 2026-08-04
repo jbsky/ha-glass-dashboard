@@ -413,11 +413,12 @@ cycle actually runs, so a green circle with a crossed-out drum reads "powered, d
 | `border_off` / `_idle` / `_run` / `_pause` | `3px solid …` | Left border per look |
 | `glow_off` / `_idle` / `_run` / `_pause` | `grayscale…` / `drop-shadow…` | Icon `filter` per look |
 | `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon while a cycle runs / any other time |
-| `pulse_animation` | `badge-pulse 1.5s ease-in-out infinite` | Animation while running |
+| `pulse_off` / `_idle` / `_run` / `_pause` | `none` / `none` / `badge-pulse 1.5s ease-in-out infinite` / `none` | Animation per look |
 | `pulse_from` / `pulse_to` | teal | The two glow colors of `badge-pulse` |
 | `countdown_bg` | `rgba(0, 105, 92, 0.9)` | Countdown pill background (`power_bg` defaults to green here) |
 
-The defaults are the washing machine above, so it comes down to the three sensors:
+The defaults are the washing machine above, so it comes down to the three sensors — plus
+one line here, because that badge pulses as soon as its plug is live, the way the pump does:
 
 ```yaml
 type: custom:button-card
@@ -428,6 +429,8 @@ tap_action:
   action: more-info
   entity: sensor.lave_linge_washer_machine_state
 variables:
+  # pulse whenever the plug feeds the machine, not only during a cycle
+  pulse_idle: badge-pulse 2s ease-in-out infinite
   state_entity: sensor.lave_linge_washer_machine_state
   finish_entity: sensor.lave_linge_washer_completion_time
   power_entity: sensor.lave_linge_power

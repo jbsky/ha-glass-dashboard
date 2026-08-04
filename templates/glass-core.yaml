@@ -1126,7 +1126,10 @@
       "glow_idle": "drop-shadow(0 0 3px rgba(46, 125, 50, 0.5))",
       "glow_run": "drop-shadow(0 0 5px rgba(0, 137, 123, 0.8))",
       "glow_pause": "drop-shadow(0 0 5px rgba(245, 124, 0, 0.8))",
-      "pulse_animation": "badge-pulse 1.5s ease-in-out infinite",
+      "pulse_off": "none",
+      "pulse_idle": "none",
+      "pulse_run": "badge-pulse 1.5s ease-in-out infinite",
+      "pulse_pause": "none",
       "pulse_from": "rgba(0, 137, 123, 0.4)",
       "pulse_to": "rgba(77, 182, 172, 0.7)",
       "countdown_bg": "rgba(0, 105, 92, 0.9)",
@@ -1155,7 +1158,7 @@
           "border-left": "[[[\n  if (entity.state !== 'on') return variables.border_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.border_run;\n  if ((variables.pause_states || []).includes(v)) return variables.border_pause;\n  return variables.border_idle;\n]]]"
         },
         {
-          "animation": "[[[\n  if (entity.state !== 'on') return 'none';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  return (variables.run_states || []).includes(v)\n    ? variables.pulse_animation : 'none';\n]]]"
+          "animation": "[[[\n  if (entity.state !== 'on') return variables.pulse_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.pulse_run;\n  if ((variables.pause_states || []).includes(v)) return variables.pulse_pause;\n  return variables.pulse_idle;\n]]]"
         }
       ],
       "icon": [
