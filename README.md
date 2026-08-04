@@ -277,10 +277,40 @@ Up to 3 toggle/command buttons inside a card.
 
 ### Badges
 
-#### `badge_status`
-Compact status indicator pill — shows entity state as a small colored badge in the view header.
+The circles in the view header. `badge_base` gives them their shape, each badge puts its own
+state logic on top, and anything extra — a countdown, a power reading — is a `custom_field`
+placed outside the circle.
 
-![badge_status](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_status.png)
+![badge row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_row.png)
+
+#### `badge_base`
+Shape only, no state: a 36 px circle with a drop shadow and a transition on every property.
+Build on it either by driving the colors yourself, or by combining it with a `state_*` template
+— `badge_pompe` in `glass-devices-example.yaml` is exactly `state_pompe` + `badge_base`.
+
+| doorbell | remote | washing machine | borehole pump |
+|:---:|:---:|:---:|:---:|
+| ![doorbell badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_doorbell.png) | ![remote badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_remote.png) | ![washing machine badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_washer.png) | ![pump badge](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_pump.png) |
+
+Four badges out of the header above, each shot on its own. The first two are `badge_base` with a
+gradient driven by the entity state. The last two add a `custom_field`: the washing machine
+shows what it is drawing, and the time left while a cycle runs; the pump shows its power. Those
+indicators are drawn outside the circle, so a badge that carries one needs `overflow: visible`
+on its card.
+
+#### `badge_status`
+Ready-made on/off variant of `badge_base` — swaps background, left border and icon on state,
+and can pulse while on.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `gradient_on` | `linear-gradient(135deg, #FFC107, #FFD54F)` | Background when on |
+| `gradient_off` | `linear-gradient(135deg, #546E7A, #90A4AE)` | Background when off |
+| `border_on` | `3px solid #FFC107` | Left border when on |
+| `border_off` | `3px solid #37474F` | Left border when off |
+| `icon_on` | `mdi:power` | Icon when on |
+| `icon_off` | `mdi:power-off` | Icon when off |
+| `pulse_animation` | `none` | CSS animation applied while on |
 
 ### Remote Buttons
 

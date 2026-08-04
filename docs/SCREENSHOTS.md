@@ -107,7 +107,8 @@ HA_ONLY="state_on_off_on state_on_off_off" ... python3 scripts/capture_screensho
 
 There are no coordinates to re-measure: the `COMPONENTS` list at the top of the script maps a
 name to a locator, and `pick` says which match to keep (`smallest` = the card itself,
-`largest` = the row it sits in, `union` = clip to a set of elements, `index` = position).
+`largest` = the row it sits in, `union` = clip to a set of elements, `index` = position,
+`badge` = one circle in the view header, matched on `entity` instead of a locator).
 
 Things worth knowing before touching that list:
 
@@ -134,6 +135,22 @@ Things worth knowing before touching that list:
 - **The theme background follows a weather entity, not the sun.** `weather.marseille` and
   `weather.senas` stay on `clear-night` for about an hour and a half after sunrise: capture too
   early and the glass sits on a night sky.
+
+Badges (`pick: "badge"`) have three quirks of their own:
+
+- **Nothing in the markup tells them apart** — every one of them is a `hui-badge` holding the
+  same 36 px circle — so they are matched on the `entity` of their card configuration.
+- **Their indicators are drawn outside the circle** (a countdown at `left: -6px`, a power
+  reading at `right: -6px`), where an element screenshot would cut them off, and the next badge
+  is only 8 px away, close enough to show up in the margin. So the shot masks the other badges
+  and clips the union of the circle and everything the card draws.
+- **The mask has to be a CSS rule injected into the shadow root, and it needs a second to
+  land.** An inline `style` on the badge does not survive: the header re-renders whenever a
+  sensor moves — every second here — and Lit rewrites the attribute right before the capture.
+  Worse, even the CSS rule paints late: `getComputedStyle` returns `hidden` immediately, but the
+  badges are composited layers (`backdrop-filter`) and the frame still shows them for close to a
+  second. Screenshotting straight after masking gives back the neighbours, which looks exactly
+  like a mask that never applied — hence `BADGE_REPAINT_MS`.
 
 ## After Capturing
 

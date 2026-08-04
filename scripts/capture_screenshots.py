@@ -113,7 +113,8 @@ MOBILE = {"width": 390, "height": 844}
 # Locators resolve through shadow DOM. A `:has-text()` selector also matches every ancestor
 # containing that text, so `pick` says which match to keep: "smallest" for one card,
 # "largest" for the row it sits in. "index" is for rows whose cards carry no text at all —
-# icons only — and is the one entry that a layout change can silently invalidate.
+# icons only — and is the one entry that a layout change can silently invalidate. "badge"
+# takes an `entity` instead of a locator, for the identical circles in the view header.
 COMPONENTS = [
     {"name": "glass_climate", "view": "/lovelace/0", "pick": "largest",
      "locator": 'button-card:has-text("Office AC")'},
@@ -154,8 +155,24 @@ COMPONENTS = [
     {"name": "field_templates_pair", "view": "/lovelace/0", "pick": "largest",
      "locator": 'hui-card:has-text("Météo")'},
 
-    {"name": "badge_status", "view": "/lovelace/0", "pick": "largest",
+    {"name": "badge_row", "view": "/lovelace/0", "pick": "largest",
      "locator": "hui-view-badges"},
+
+    # Les badges sont des pastilles de 36 px identiques : rien dans leur balisage ne les
+    # distingue, on les retrouve donc par l'entite de leur configuration. Leurs indicateurs
+    # (compte a rebours, puissance) sont dessines *hors* de la pastille — d'ou "badge", qui
+    # clippe l'union du badge et de tout ce que sa button-card dessine.
+    {"name": "badge_doorbell", "view": "/lovelace/0", "pick": "badge",
+     "entity": "switch.sonnette"},
+
+    {"name": "badge_remote", "view": "/lovelace/0", "pick": "badge",
+     "entity": "remote.rm4pro"},
+
+    {"name": "badge_washer", "view": "/lovelace/0", "pick": "badge",
+     "entity": "switch.lave_linge_2"},
+
+    {"name": "badge_pump", "view": "/lovelace/0", "pick": "badge",
+     "entity": "switch.pompe_forage"},
 
     # le panneau remote n'est pas une carte mais une pile de grilles : on clippe leur union
     {"name": "remote_view", "view": "/lovelace/2", "pick": "union", "pad": 10,
@@ -296,6 +313,104 @@ def visible_boxes(page, selector):
     return out
 
 
+BADGE_REPAINT_MS = 1000
+
+BADGE_WALK_JS = """
+    const badges = [];
+    const walk = (node) => {
+        if (!node) return;
+        if (node.tagName === 'HUI-BADGE') { badges.push(node); return; }
+        const kids = [...(node.children || []),
+                      ...(node.shadowRoot ? node.shadowRoot.children : [])];
+        for (const k of kids) walk(k);
+    };
+    walk(document.querySelector('home-assistant'));
+"""
+
+BADGE_SCAN_JS = """(wanted) => {
+    %s
+    let hit = null;
+    const seen = [];
+    badges.forEach((badge, i) => {
+        let card = null;
+        const find = (n) => {
+            if (!n || card) return;
+            if (n.tagName === 'BUTTON-CARD') { card = n; return; }
+            const kids = [...(n.children || []),
+                          ...(n.shadowRoot ? n.shadowRoot.children : [])];
+            for (const k of kids) find(k);
+        };
+        find(badge);
+        const cfg = card ? (card._config || card.config || {}) : (badge._config || {});
+        if (!cfg.entity) return;
+        seen.push(cfg.entity);
+        if (cfg.entity !== wanted) return;
+        const r = badge.getBoundingClientRect();
+        let box = {x0: r.left, y0: r.top, x1: r.right, y1: r.bottom};
+        if (card && card.shadowRoot) {
+            for (const el of card.shadowRoot.querySelectorAll('*')) {
+                const b = el.getBoundingClientRect();
+                if (!b.width || !b.height) continue;
+                box = {x0: Math.min(box.x0, b.left), y0: Math.min(box.y0, b.top),
+                       x1: Math.max(box.x1, b.right), y1: Math.max(box.y1, b.bottom)};
+            }
+        }
+        hit = {index: i, box};
+    });
+    return {hit, seen};
+}""" % BADGE_WALK_JS
+
+# Une regle CSS dans le shadow root, et non un style inline sur les badges : le bandeau se
+# redessine des qu'un capteur bouge (ici toutes les secondes) et Lit reecrit alors l'attribut
+# style, ce qui redonne les voisins juste avant la capture.
+BADGE_MASK_JS = """(index) => {
+    %s
+    if (!badges.length) return;
+    const root = badges[0].getRootNode();
+    let sheet = root.querySelector('#capture-mask');
+    if (!sheet) {
+        sheet = document.createElement('style');
+        sheet.id = 'capture-mask';
+        root.appendChild(sheet);
+    }
+    sheet.textContent = index === null ? '' :
+        `hui-badge { visibility: hidden !important; }
+         hui-badge:nth-of-type(${index + 1}) { visibility: visible !important; }`;
+}""" % BADGE_WALK_JS
+
+
+def capture_badge(page, spec, target):
+    """Shoot one badge from the view header, on its own.
+
+    Badges all render as the same 36 px circle, so they are matched on the entity in their
+    card configuration rather than on anything in the markup. Two things make this more than
+    an element screenshot: their indicators — a countdown pill, a power reading — are drawn
+    *outside* that circle, where an element screenshot would cut them off, and the next badge
+    is only 8 px away, close enough to show up in the margin. So the neighbours are masked for
+    the shot, and the clip is the union of the circle and everything the card draws.
+    """
+    pad = spec.get("pad", 8)
+    found = page.evaluate(BADGE_SCAN_JS, spec["entity"])
+    if not found["hit"]:
+        raise RuntimeError(f"{spec['name']}: no header badge for {spec['entity']} — "
+                           f"the view has {sorted(found['seen'])}")
+    box = found["hit"]["box"]
+    clip = {"x": box["x0"] - pad, "y": box["y0"] - pad,
+            "width": box["x1"] - box["x0"] + 2 * pad,
+            "height": box["y1"] - box["y0"] + 2 * pad}
+    page.evaluate(BADGE_MASK_JS, found["hit"]["index"])
+    try:
+        # Les badges sont des couches composees (backdrop-filter) : le masque est bien
+        # applique — `visibility` calculee passe a `hidden` tout de suite — mais la frame
+        # peinte, elle, met pres d'une seconde a suivre. Shooter aussitot rend les voisins.
+        page.wait_for_timeout(BADGE_REPAINT_MS)
+        page.screenshot(path=target, clip=clip)
+    finally:
+        page.evaluate(BADGE_MASK_JS, None)
+        page.wait_for_timeout(BADGE_REPAINT_MS)
+    return clip
+
+
 def capture_card(page, spec, target):
     """Shoot one component and return its CSS box.
 
@@ -305,6 +420,8 @@ def capture_card(page, spec, target):
     — the remote panel is a stack of grid rows — so "union" clips the page to the whole set.
     """
     pick = spec.get("pick", "smallest")
+    if pick == "badge":
+        return capture_badge(page, spec, target)
     if pick == "index":
         card = page.locator(spec["locator"]).nth(spec["index"])
         card.screenshot(path=target, timeout=20000)
