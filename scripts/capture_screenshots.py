@@ -128,9 +128,6 @@ COMPONENTS = [
     {"name": "glass_cover_closed", "view": "/lovelace/0", "pick": "smallest",
      "locator": 'button-card:has-text("Porte fen")'},
 
-    {"name": "glass_covers_row", "view": "/lovelace/0", "pick": "largest",
-     "locator": 'hui-card:has(button-card:has-text("Baie vitr"))'},
-
     {"name": "glass_garage", "view": "/lovelace/0", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Garage")'},
 
