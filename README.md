@@ -212,9 +212,11 @@ Several of them inside a `glass_container` row:
 ![state_on_off row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/state_on_off.png)
 
 #### `glass_cover`
-Shutter/blind control with animation and position badge. The badge, the icon color and the left
-border all follow the current position — `fermé` at 0 %, `ouvert` at 100 %, the percentage in
-between, and `ouverture` / `fermeture` (with a pulsing icon) while the shutter is moving.
+Shutter/blind control with animation and position badge. The badge sits in the top-right corner
+— out of the way of the name, which long entity names used to run into — and it follows the
+current position along with the icon color and the left border: `fermé` at 0 %, `ouvert` at
+100 %, the percentage in between, and `ouverture` / `fermeture` (with a pulsing icon) while the
+shutter is moving.
 
 | part-way open | opening | closed |
 |:---:|:---:|:---:|

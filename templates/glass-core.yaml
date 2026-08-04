@@ -659,7 +659,7 @@
             "position": "absolute"
           },
           {
-            "bottom": "4px"
+            "top": "4px"
           },
           {
             "right": "6px"
