@@ -477,10 +477,10 @@ variables:
 
 #### `battery_rack`
 Every battery in the house as a rack of upright cells, lowest first. One card draws the whole
-table: it walks the state machine itself, keeps the `sensor.*` entities whose `device_class` is
-`battery` and whose state is a number, and lays them out `columns` per row. Nothing to list and
-nothing to keep in sync — a device that gains a battery sensor shows up on its own, one that
-goes `unavailable` drops out. It needs no card beyond `button-card`.
+table: it walks the state machine itself, reads whatever each device publishes about its
+battery, and lays the result out `columns` per row. Nothing to list and nothing to keep in
+sync — a device that gains a battery sensor shows up on its own, one that goes `unavailable`
+drops out. It needs no card beyond `button-card`.
 
 ![battery_rack](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/battery_rack.png)
 
@@ -489,6 +489,21 @@ which is what puts the three dying plant sensors above at the top of the rack. T
 inside the cell, the name under it — the friendly name minus its trailing "Battery"/"Batterie"
 (`name_strip`), clamped to two lines. Clicking a cell opens *that* sensor's more-info dialog,
 so nothing is lost against a list of bars.
+
+**Not every device measures its battery**, and the ones that don't are exactly the ones a
+percentage-only rack hides. Three readings are accepted, in that order of preference:
+
+| The device publishes | Read as | Drawn as |
+|---|---|---|
+| a number (`device_class: battery`, or a `%` on a `battery` entity) | the value | solid outline, the number inside |
+| a word — `low`, `medium`, `high`… (`text_levels`) | the mapped percentage | dashed outline, the word inside |
+| a binary `battery low` (`binary_sensor`, `device_class: battery`) | `low` when on, `ok` when off | dashed outline, `low` / `ok` inside |
+
+A dashed outline therefore means *deduced, not measured* — the four freezer and fridge
+thermometers above only ever say `high` or `medium`. Devices commonly publish two of these at
+once, so the rack keeps **one cell per device**, best reading first: a sensor that reports both
+`54 %` and `high` is drawn once, from the number. A `*_battery_state` holding a charging status
+(`discharging`, `Not Charging`) is not a level and is ignored.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -499,11 +514,13 @@ so nothing is lost against a list of bars.
 | `low` / `warn` / `mid` | `15` / `30` / `60` | Severity thresholds, in percent |
 | `color_low` / `color_warn` | `#db4437` / `#ff9800` | Fill and border below each threshold |
 | `color_mid` / `color_full` | `#fdd835` / `#43a047` | Fill and border above them |
-| `color_unknown` | `#78909C` | Used when the state is not a number |
+| `color_unknown` | `#78909C` | Used when no reading can be made of the state |
 | `width` / `height` | `26px` / `46px` | Size of one cell |
 | `gap` | `10px 6px` | Grid gap, row then column |
 | `pulse_low` | `battery-low 1.6s ease-in-out infinite` | Animation at or below `low`; `none` to drop it |
 | `name_strip` | trailing *battery* / *batterie* | Regex cut off the end of the friendly name |
+| `text_levels` | `low: 15`, `medium: 50`, `high: 90`… | Percentage each spelled-out level stands for |
+| `text_labels` | `medium: med`, `critical: !`… | Shorter word to print in the cell |
 
 ```yaml
 type: custom:button-card
