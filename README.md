@@ -501,13 +501,15 @@ percentage-only rack hides. Three readings are accepted, in that order of prefer
 
 A dashed outline therefore means *deduced, not measured* — the four freezer and fridge
 thermometers above only ever say `high` or `medium`. Devices commonly publish two of these at
-once, so the rack keeps **one cell per device**, best reading first: a sensor that reports both
-`54 %` and `high` is drawn once, from the number. A `*_battery_state` holding a charging status
-(`discharging`, `Not Charging`) is not a level and is ignored.
+once, so the rack keeps **one cell per device**, best reading first: the plant sensor above
+reports both `2 %` and `low` and is drawn once, from the number. A `*_battery_state` holding a
+charging status (`discharging`, `Not Charging`) is not a level and is ignored, and the `_2`
+Home Assistant appends to a duplicate name is kept — `x_battery` and `x_battery_2` are two
+devices, while `x_battery_level_2` and `x_battery_state_2` are one.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `entities` | `[]` | Explicit list; empty means every battery sensor found |
+| `entities` | `[]` | Explicit list; empty means every battery found. A listed entity with no readable level is drawn grey with a `?` rather than dropped |
 | `exclude` | — | Regex matched against the entity id, dropped from the rack |
 | `columns` | `6` | Cells per row |
 | `sort` | `level` | `level` (lowest first), `name`, or `none` for the order given |
@@ -544,6 +546,11 @@ variables:
     - sensor.thermometre_mathilde_battery
     - sensor.thermometre_alexandre_battery
 ```
+
+One thing to know if you serve Home Assistant through a hardened reverse proxy: a cell opens
+its dialog from an inline handler, so a `Content-Security-Policy` whose `script-src` drops
+`'unsafe-inline'` leaves the rack drawn exactly as above but the cells inert. Home Assistant
+itself sends no such policy.
 
 ### Remote Buttons
 
