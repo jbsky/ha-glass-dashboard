@@ -91,6 +91,14 @@ README links `home-view.jpg`, `weather-view.jpg`, `remote-view.jpg` and `home-mo
 full-view shots are committed as JPEG because a 2x PNG of a photographic background weighs
 around 9 MB. Downscale the 2x capture to 1920 wide and save at quality 90.
 
+The mobile shot has to show a view that is taller than the phone, and `full_page=True` is the
+wrong way to get it: the theme paints its background with `background-attachment: fixed`,
+which Chromium only paints over one window's worth of height, so everything a full-page
+capture adds below that comes back **white** — the shot ends up split in two. The script grows
+the window to the height of the document instead (`grow_to_page`) and takes an ordinary
+capture. Check the bottom row of pixels of any new mobile shot: white there means the fix was
+bypassed, not that the dashboard ends.
+
 ## Component Crops (`docs/screenshots/components/`)
 
 The per-template close-ups used in the README's *Template Reference* are captured by the same

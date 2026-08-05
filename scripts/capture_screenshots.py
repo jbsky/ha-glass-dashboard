@@ -294,12 +294,32 @@ def new_page(browser, token, viewport, mobile=False):
     return ctx, ctx.new_page()
 
 
+def grow_to_page(page, width, cap=20000):
+    """Grow the window to the height of the document, and return that height.
+
+    The mobile shot has to show the whole view, and `full_page=True` is the wrong way to get
+    it here: the theme paints its background with `background-attachment: fixed`, which
+    Chromium only paints over one window's worth of height — everything a full-page capture
+    adds below that comes back white. Making the window as tall as the document instead keeps
+    the background under the entire shot. `min-height: 100vh` on the view means the document
+    then grows by the height of the header, but that surplus is empty space below the last
+    card, so one measurement is enough and the content still fits.
+    """
+    height = min(page.evaluate("Math.ceil(document.documentElement.scrollHeight)"), cap)
+    page.set_viewport_size({"width": width, "height": height})
+    page.wait_for_timeout(2000)                    # laisser le fond se repeindre
+    return height
+
+
 def capture_views(page, suffix, mobile=False):
     for path, name in VIEWS:
+        page.set_viewport_size(MOBILE if mobile else DESKTOP)
         page.goto(HA_URL + path, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(SETTLE_MS)
+        if mobile:
+            grow_to_page(page, MOBILE["width"])
         target = os.path.join(OUT, f"{name}-{suffix}.png")
-        page.screenshot(path=target, full_page=mobile)
+        page.screenshot(path=target)
         print(f"  {target}")
 
 
