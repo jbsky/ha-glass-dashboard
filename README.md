@@ -4,7 +4,7 @@ A stunning glass-morphism theme with **weather-reactive backgrounds** and a comp
 
 [![HACS Badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/jbsky/ha-glass-dashboard)](https://github.com/jbsky/ha-glass-dashboard/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/jbsky/ha-glass-dashboard/blob/main/LICENSE)
 
 ---
 
