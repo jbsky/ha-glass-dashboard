@@ -118,6 +118,10 @@ Things worth knowing before touching that list:
 - **Text must be unique enough.** `button-card:has-text("Garage")` matched a label inside a
   sensor card; scoping it to the covers row (`hui-card:has(button-card:has-text("Baie vitr"))`)
   fixed it. The same applies to `Cuisine`, which appears in both the lamp row and the covers.
+- **A card whose own template gives it a class is easier to find than one with text.**
+  `battery_rack` is matched by `hui-card:has(.batt-grid)`: `:has()` sees through the shadow
+  root, and that class comes from the template's `extra_styles`, so it moves with the card
+  instead of with a label someone may rename.
 - **The remote panel is not a card** but eleven stacked `hui-grid-card` rows, so it uses
   `union` — the frame is centred on the grid by construction.
 - **The device row has no text at all** (icons only) and is the one entry addressed by

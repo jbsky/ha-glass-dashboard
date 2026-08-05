@@ -155,6 +155,10 @@ COMPONENTS = [
     {"name": "field_templates_pair", "view": "/lovelace/0", "pick": "largest",
      "locator": 'hui-card:has-text("Météo")'},
 
+    # la seule carte de la vue qui contienne une grille de piles : pas de texte a matcher
+    {"name": "battery_rack", "view": "/lovelace/0", "pick": "smallest",
+     "locator": "hui-card:has(.batt-grid)"},
+
     {"name": "badge_row", "view": "/lovelace/0", "pick": "largest",
      "locator": "hui-view-badges"},
 

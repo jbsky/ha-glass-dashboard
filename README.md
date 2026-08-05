@@ -14,7 +14,7 @@ A stunning glass-morphism theme with **weather-reactive backgrounds** and a comp
 |---------|--------------------:|-------------:|------------------:|
 | Glass-morphism | Theme only | No | Theme + per-card |
 | Dynamic backgrounds | No | No | 15 weather conditions |
-| Button-card templates | No | Config dump | 36 reusable templates |
+| Button-card templates | No | Config dump | 37 reusable templates |
 | Sun-aware (day/night) | No | No | Yes |
 | Multi-view themes | No | No | Yes (tech, remote) |
 | Remote control layout | No | No | Compact 4-col grid |
@@ -34,7 +34,7 @@ Every card gets a frosted glass effect via `card-mod`:
 - Subtle light borders
 - Consistent across all card types
 
-### 36 Button-Card Templates
+### 37 Button-Card Templates
 A complete template library organized by function:
 
 | Category | Templates | Purpose |
@@ -43,7 +43,7 @@ A complete template library organized by function:
 | **Components** | `glass_climate`, `glass_cover`, `glass_garage` | Full device widgets |
 | **Fields** | `field_command`, `field_graph`, `field_title`, `field_secondary` | Card sub-components |
 | **States** | `state_on_off`, `animation_effects` | Visual state feedback |
-| **Sensors** | `battery_level`, `humidity_template`, `temperature_template` | Sensor display |
+| **Sensors** | `battery_rack`, `battery_level`, `humidity_template`, `temperature_template` | Sensor display |
 | **Remote** | `remote_button`, `remote_separator` | IR/RF remote grid |
 | **Badges** | `badge_base`, `badge_status`, `badge_power`, `badge_appliance`, `badge_health` | Status indicators |
 
@@ -471,6 +471,61 @@ double_tap_action:
     entity_id: button.doorbell_relay_doorbell_ring
 variables:
   watch_entity: button.doorbell_relay_doorbell_ring
+```
+
+### Sensors
+
+#### `battery_rack`
+Every battery in the house as a rack of upright cells, lowest first. One card draws the whole
+table: it walks the state machine itself, keeps the `sensor.*` entities whose `device_class` is
+`battery` and whose state is a number, and lays them out `columns` per row. Nothing to list and
+nothing to keep in sync — a device that gains a battery sensor shows up on its own, one that
+goes `unavailable` drops out. It needs no card beyond `button-card`.
+
+![battery_rack](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/battery_rack.png)
+
+The fill height is the charge and its color the severity band; a cell at or below `low` pulses,
+which is what puts the three dying plant sensors above at the top of the rack. The number sits
+inside the cell, the name under it — the friendly name minus its trailing "Battery"/"Batterie"
+(`name_strip`), clamped to two lines. Clicking a cell opens *that* sensor's more-info dialog,
+so nothing is lost against a list of bars.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `entities` | `[]` | Explicit list; empty means every battery sensor found |
+| `exclude` | — | Regex matched against the entity id, dropped from the rack |
+| `columns` | `6` | Cells per row |
+| `sort` | `level` | `level` (lowest first), `name`, or `none` for the order given |
+| `low` / `warn` / `mid` | `15` / `30` / `60` | Severity thresholds, in percent |
+| `color_low` / `color_warn` | `#db4437` / `#ff9800` | Fill and border below each threshold |
+| `color_mid` / `color_full` | `#fdd835` / `#43a047` | Fill and border above them |
+| `color_unknown` | `#78909C` | Used when the state is not a number |
+| `width` / `height` | `26px` / `46px` | Size of one cell |
+| `gap` | `10px 6px` | Grid gap, row then column |
+| `pulse_low` | `battery-low 1.6s ease-in-out infinite` | Animation at or below `low`; `none` to drop it |
+| `name_strip` | trailing *battery* / *batterie* | Regex cut off the end of the friendly name |
+
+```yaml
+type: custom:button-card
+template: battery_rack
+variables:
+  columns: 6
+```
+
+Auto-discovery is the default, not the only mode. Name the cells yourself and they render in
+that order, which is how you build one rack per room — or drop the phones from the house-wide
+one with `exclude: iphone|ipad`:
+
+```yaml
+type: custom:button-card
+template: battery_rack
+variables:
+  columns: 3
+  sort: none
+  entities:
+    - sensor.thermometre_parent_battery
+    - sensor.thermometre_mathilde_battery
+    - sensor.thermometre_alexandre_battery
 ```
 
 ### Remote Buttons

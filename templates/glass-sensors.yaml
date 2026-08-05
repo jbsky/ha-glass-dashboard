@@ -59,5 +59,71 @@
   },
   "door_template": {
     "template": "icon_tiny"
+  },
+  "battery_rack": {
+    "variables": {
+      "entities": [],
+      "exclude": "",
+      "columns": 6,
+      "sort": "level",
+      "low": 15,
+      "warn": 30,
+      "mid": 60,
+      "color_low": "#db4437",
+      "color_warn": "#ff9800",
+      "color_mid": "#fdd835",
+      "color_full": "#43a047",
+      "color_unknown": "#78909C",
+      "width": "26px",
+      "height": "46px",
+      "gap": "10px 6px",
+      "pulse_low": "battery-low 1.6s ease-in-out infinite",
+      "name_strip": "\\s*(?:niveau\\s+(?:de\\s+)?)?batter(?:y|ie)(?:\\s*level)?\\s*$"
+    },
+    "show_icon": false,
+    "show_name": false,
+    "show_state": false,
+    "tap_action": {
+      "action": "none"
+    },
+    "hold_action": {
+      "action": "none"
+    },
+    "triggers_update": "[[[\n  const listed = variables.entities || [];\n  let ids = listed.length ? listed.slice() : Object.keys(states).filter(id => {\n    const s = states[id];\n    return id.startsWith('sensor.')\n      && s.attributes.device_class === 'battery'\n      && !isNaN(Number(s.state));\n  });\n  if (variables.exclude) {\n    const skip = new RegExp(variables.exclude, 'i');\n    ids = ids.filter(id => !skip.test(id));\n  }\n  ids = ids.filter(id => states[id]);\n  return ids;\n]]]",
+    "custom_fields": {
+      "rack": "[[[\n  const esc = t => String(t).replace(/[&<>\"]/g, c =>\n    ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;'}[c]));\n  const shortName = id => {\n    const s = states[id];\n    const full = s.attributes.friendly_name || id;\n    const cut = full.replace(new RegExp(variables.name_strip, 'i'), '').trim();\n    return cut || full;\n  };\n  const color = v => {\n    if (isNaN(v)) return variables.color_unknown;\n    if (v <= variables.low) return variables.color_low;\n    if (v <= variables.warn) return variables.color_warn;\n    if (v <= variables.mid) return variables.color_mid;\n    return variables.color_full;\n  };\n\n  const listed = variables.entities || [];\n  let ids = listed.length ? listed.slice() : Object.keys(states).filter(id => {\n    const s = states[id];\n    return id.startsWith('sensor.')\n      && s.attributes.device_class === 'battery'\n      && !isNaN(Number(s.state));\n  });\n  if (variables.exclude) {\n    const skip = new RegExp(variables.exclude, 'i');\n    ids = ids.filter(id => !skip.test(id));\n  }\n  ids = ids.filter(id => states[id]);\n\n  const level = id => {\n    const v = Number(states[id].state);\n    return isNaN(v) ? 999 : v;\n  };\n  if (variables.sort === 'level') ids.sort((a, b) => level(a) - level(b));\n  else if (variables.sort === 'name') ids.sort((a, b) => shortName(a).localeCompare(shortName(b)));\n\n  const cell = id => {\n    const raw = Number(states[id].state);\n    const pct = isNaN(raw) ? 0 : Math.max(0, Math.min(100, raw));\n    const c = color(raw);\n    const anim = (!isNaN(raw) && raw <= variables.low && variables.pulse_low !== 'none')\n      ? `animation:${variables.pulse_low};` : '';\n    const open = `this.dispatchEvent(new CustomEvent('hass-more-info',` +\n      `{detail:{entityId:'${id}'},bubbles:true,composed:true}))`;\n    return `<div class=\"batt-cell\" onclick=\"${open}\" title=\"${esc(states[id].attributes.friendly_name || id)}\">\n        <div class=\"batt-cap\" style=\"background:${c};\"></div>\n        <div class=\"batt-shell\" style=\"border-color:${c};${anim}\">\n          <div class=\"batt-fill\" style=\"height:${pct}%;background:${c};\"></div>\n          <span class=\"batt-value\">${isNaN(raw) ? '?' : Math.round(raw)}</span>\n        </div>\n        <div class=\"batt-name\">${esc(shortName(id))}</div>\n      </div>`;\n  };\n  if (!ids.length) return '';\n  const cols = Math.max(1, Number(variables.columns) || 1);\n  return `<div class=\"batt-grid\" style=\"grid-template-columns:repeat(${cols}, minmax(0, 1fr));\">` +\n    ids.map(cell).join('') + `</div>`;\n]]]"
+    },
+    "styles": {
+      "card": [
+        {
+          "padding": "10px 8px"
+        },
+        {
+          "--batt-width": "[[[ return variables.width ]]]"
+        },
+        {
+          "--batt-height": "[[[ return variables.height ]]]"
+        },
+        {
+          "--batt-gap": "[[[ return variables.gap ]]]"
+        }
+      ],
+      "grid": [
+        {
+          "grid-template-areas": "\"rack\""
+        }
+      ],
+      "custom_fields": {
+        "rack": [
+          {
+            "width": "100%"
+          },
+          {
+            "min-width": "0"
+          }
+        ]
+      }
+    },
+    "extra_styles": "\n.batt-grid {\n  display: grid;\n  gap: var(--batt-gap, 10px 6px);\n  width: 100%;\n}\n.batt-cell {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 3px;\n  min-width: 0;\n  /* the whole card is pointer-events:none (button-card, tap_action:none):\n     each cell takes them back to open its own more-info dialog */\n  pointer-events: auto;\n  cursor: pointer;\n}\n.batt-cap {\n  width: 10px;\n  height: 3px;\n  border-radius: 2px 2px 0 0;\n}\n.batt-shell {\n  position: relative;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: var(--batt-width, 26px);\n  height: var(--batt-height, 46px);\n  border: 2px solid;\n  border-radius: 5px;\n  overflow: hidden;\n  background: rgba(0, 0, 0, 0.3);\n}\n.batt-fill {\n  position: absolute;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  transition: height 0.6s ease-in-out, background 0.4s ease-in-out;\n}\n.batt-value {\n  position: relative;\n  font-size: 10px;\n  font-weight: 700;\n  color: #fff;\n  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);\n}\n.batt-name {\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  max-width: 100%;\n  font-size: 9px;\n  line-height: 1.15;\n  text-align: center;\n  /* button-card wraps custom fields in a .ellipsis (nowrap): take that back */\n  white-space: normal;\n  overflow-wrap: anywhere;\n  color: var(--primary-text-color);\n  opacity: 0.85;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);\n}\n@keyframes battery-low {\n  0%, 100% { box-shadow: 0 0 0 0 rgba(219, 68, 55, 0); }\n  50%      { box-shadow: 0 0 9px 2px rgba(219, 68, 55, 0.85); }\n}\n"
   }
 }
