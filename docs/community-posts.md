@@ -15,7 +15,7 @@ I've been working on my dashboard for a while and decided to open-source the res
 
 ### What it does
 
-The background changes automatically with your local weather (15 conditions) and detects day/night. All cards get a frosted glass look via card-mod. And I'm sharing 33 button-card templates as reusable components.
+The background changes automatically with your local weather (15 conditions) and detects day/night. All cards get a frosted glass look from native theme variables — no plugin needed for that part. And I'm sharing 33 button-card templates as reusable components.
 
 ### Key components
 
@@ -40,7 +40,7 @@ The background changes automatically with your local weather (15 conditions) and
 - **HACS**: Add as custom repository (Theme category)
 
 ### Requirements
-- card-mod
+- UIX (for the weather-reactive background — card-mod is broken since HA 2026.8)
 - button-card
 - A weather integration
 
@@ -65,7 +65,7 @@ Open-sourced my glass-morphism dashboard setup. The background changes with weat
 
 **Highlights:**
 - Weather-reactive backgrounds (sunny, rainy, snowy, foggy, etc.)
-- Glass-morphism on all cards (backdrop-filter blur via card-mod)
+- Glass-morphism on all cards (native `ha-card-backdrop-filter`, no plugin)
 - `glass_climate` — full HVAC widget in one template call
 - `glass_cover` — animated shutter control
 - `remote_button` — compact IR remote grid for mobile
@@ -73,7 +73,7 @@ Open-sourced my glass-morphism dashboard setup. The background changes with weat
 - 15 curated Mediterranean background photos included
 - HACS compatible
 
-**Requires:** card-mod + button-card + any weather integration
+**Requires:** UIX + button-card + any weather integration
 
 **GitHub:** https://github.com/jbsky/ha-glass-dashboard
 

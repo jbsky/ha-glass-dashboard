@@ -1439,7 +1439,7 @@
           "bar_spacing": 5,
           "height": 100,
           "group": true,
-          "card_mod": {
+          "uix": {
             "style": "ha-card { border: none !important; background-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }\n"
           },
           "show": {

@@ -28,8 +28,8 @@ A stunning glass-morphism theme with **weather-reactive backgrounds** and a comp
 The dashboard background changes automatically based on your local weather — sunny, rainy, stormy, snowy, foggy... with night-time variants when the sun goes below the horizon.
 
 ### Glass-Morphism Everywhere
-Every card gets a frosted glass effect via `card-mod`:
-- `backdrop-filter: blur(12px)` for the glass effect
+Every card gets a frosted glass effect from native Home Assistant theme variables — no plugin required:
+- `ha-card-backdrop-filter: blur(12px)` for the glass effect
 - Semi-transparent dark background
 - Subtle light borders
 - Consistent across all card types
@@ -163,11 +163,20 @@ Or use [decluttering-card](https://github.com/custom-cards/decluttering-card) fo
 
 ## Requirements
 
-- [card-mod](https://github.com/thomasloven/lovelace-card-mod) (required for glass effect + dynamic backgrounds)
+- [UIX](https://github.com/Lint-Free-Technology/uix) (required for the weather-reactive background)
 - [button-card](https://github.com/custom-cards/button-card) (required for templates)
 - [mini-graph-card](https://github.com/kalkih/mini-graph-card) (optional, for `field_graph`)
 - [scheduler-card](https://github.com/nielsfaber/scheduler-card) (optional, for scheduling view)
 - A weather integration configured (e.g., Met.no, OpenWeatherMap)
+
+> **Migrating from card-mod?** Versions up to `v1.x` of this theme relied on card-mod, which
+> is broken since Home Assistant 2026.8 and will not be fixed
+> ([lovelace-card-mod#606](https://github.com/thomasloven/lovelace-card-mod/issues/606)).
+> Uninstall card-mod, drop its `extra_module_url` entry from `configuration.yaml`, restart,
+> then install UIX from HACS and add the integration in **Settings > Devices & Services**.
+> The glass effect itself no longer needs any plugin — it now uses native theme variables.
+> UIX is only required for the weather background; without it the cards still look right,
+> they just sit on the plain Home Assistant background.
 
 ---
 
@@ -596,16 +605,16 @@ In the theme file, adjust:
 ha-card-background: "rgba(20, 20, 30, 0.55)"  # opacity (0.3 = lighter, 0.7 = darker)
 ```
 
-And in `card-mod-card-yaml`:
+And the blur radius, right below it:
 ```yaml
-backdrop-filter: blur(12px) !important;  # blur radius (8px = subtle, 20px = heavy)
+ha-card-backdrop-filter: "blur(12px)"  # 8px = subtle, 20px = heavy
 ```
 
 ### Adding your own backgrounds
-The theme uses a Jinja2 map in `card-mod-view`. Add new conditions:
+The theme uses a Jinja2 map in `uix-view`. Add new conditions:
 ```yaml
 {% set weather_images = {
-    'your-condition': '/local/backgrounds/weather/your-image.jpg?v=1',
+    'your-condition': 'your-image.jpg',
     ...
 } %}
 ```
@@ -616,7 +625,7 @@ The theme uses a Jinja2 map in `card-mod-view`. Add new conditions:
 
 - Glass-morphism inspired by [glassmorphism.com](https://glassmorphism.com)
 - Background photos from [Unsplash](https://unsplash.com) (free license)
-- Built with [card-mod](https://github.com/thomasloven/lovelace-card-mod) and [button-card](https://github.com/custom-cards/button-card)
+- Built with [UIX](https://github.com/Lint-Free-Technology/uix) and [button-card](https://github.com/custom-cards/button-card)
 
 ---
 
