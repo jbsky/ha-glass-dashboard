@@ -14,7 +14,7 @@ A stunning glass-morphism theme with **weather-reactive backgrounds** and a comp
 |---------|--------------------:|-------------:|------------------:|
 | Glass-morphism | Theme only | No | Theme + per-card |
 | Dynamic backgrounds | No | No | 15 weather conditions |
-| Button-card templates | No | Config dump | 37 reusable templates |
+| Button-card templates | No | Config dump | 38 reusable templates |
 | Sun-aware (day/night) | No | No | Yes |
 | Multi-view themes | No | No | Yes (tech, remote) |
 | Remote control layout | No | No | Compact 4-col grid |
@@ -34,7 +34,7 @@ Every card gets a frosted glass effect from native Home Assistant theme variable
 - Subtle light borders
 - Consistent across all card types
 
-### 37 Button-Card Templates
+### 38 Button-Card Templates
 A complete template library organized by function:
 
 | Category | Templates | Purpose |
@@ -45,7 +45,7 @@ A complete template library organized by function:
 | **States** | `state_on_off`, `animation_effects` | Visual state feedback |
 | **Sensors** | `battery_rack`, `battery_level`, `humidity_template`, `temperature_template` | Sensor display |
 | **Remote** | `remote_button`, `remote_separator` | IR/RF remote grid |
-| **Badges** | `badge_base`, `badge_status`, `badge_power`, `badge_appliance`, `badge_health` | Status indicators |
+| **Badges** | `badge_base`, `badge_status`, `badge_power`, `badge_countdown`, `badge_appliance`, `badge_health` | Status indicators |
 
 ### Climate Widget (`glass_climate`)
 A self-contained HVAC component with:
@@ -286,7 +286,7 @@ Up to 3 toggle/command buttons inside a card.
 
 ### Badges
 
-The circles in the view header. They are four pieces that stack, so a badge is a card with a
+The circles in the view header. They are five pieces that stack, so a badge is a card with a
 handful of `variables` rather than a page of inline JavaScript:
 
 | | |
@@ -294,12 +294,18 @@ handful of `variables` rather than a page of inline JavaScript:
 | `badge_base` | the shape — and the `badge-pulse` keyframes the others animate with |
 | `badge_status` | on/off colors |
 | `badge_power` | the power pill |
+| `badge_countdown` | the time-left pill |
 | `badge_appliance` / `badge_health` | a whole behaviour, built on the pieces above |
 
-`badge_power` carries nothing but the pill, so it combines: `template: [badge_status,
-badge_power]` is an on/off badge that reads a wattage, and `badge_appliance` picks up the same
-pill without redefining it. Anything drawn outside the circle is a `custom_field`, which is
-why `badge_power` sets `overflow: visible` on the card.
+The two pills carry nothing but themselves — no colors, no shape — so they combine: `template:
+[badge_status, badge_power]` is an on/off badge that reads a wattage, and `badge_appliance` is
+`[badge_status, badge_power, badge_countdown]` with the machine phase wired on top. Anything
+drawn outside the circle is a `custom_field`, which is why both pills set `overflow: visible`
+on the card.
+
+One thing does not stack: `triggers_update` is a single expression, so the last template in
+the list wins. A card that combines two pills has to declare its own, naming every entity it
+reads — `badge_appliance` does exactly that.
 
 ![badge row](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/badge_row.png)
 
@@ -365,10 +371,10 @@ variables:
 ```
 
 #### `badge_power`
-A pill in the corner with the power being drawn, and nothing else — no colors, no shape. It is
-meant to be stacked on a badge that has those: `[badge_status, badge_power]` for an on/off
-device, and `badge_appliance` pulls it in the same way. The pill disappears while the badge is
-off, or when the sensor holds anything that is not a number.
+A pill in the bottom-right corner with the power being drawn, and nothing else — no colors, no
+shape. It is meant to be stacked on a badge that has those: `[badge_status, badge_power]` for
+an on/off device, and `badge_appliance` pulls it in the same way. The pill disappears while
+the badge is off, or when the sensor holds anything that is not a number.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -401,16 +407,37 @@ variables:
   pulse_to: rgba(79, 195, 247, 0.7)
 ```
 
+#### `badge_countdown`
+The same idea as `badge_power`, for time instead of watts: a pill in the bottom-left corner
+holding what is left of a countdown, and nothing else. It reads an absolute timestamp and
+prints the distance to it — `45m`, then `1h30`. The pill disappears while the badge is off,
+when the sensor holds anything that is not a date, or when `countdown_active` is false.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `finish_entity` | — | Timestamp sensor for the end of the countdown |
+| `countdown_bg` | `rgba(0,0,0,0.55)` | Pill background |
+| `countdown_active` | `true` | Extra gate — accepts a JS template, and `badge_appliance` uses it to show the pill only during a cycle |
+
+`countdown_active` is what keeps the brick honest on a sensor that goes stale: many appliances
+leave their completion time in the past once they stop, and the pill would otherwise sit at
+`0m` forever. Gate it on whatever means "still running" for that device.
+
 #### `badge_appliance`
 An appliance behind a plug: the badge follows the switch *and* a machine-state sensor, so it
 has four looks — unplugged, idle, running, paused — and carries both the time left and the
-power drawn. Nothing but the dark circle shows while the plug is off. It is built on
-`badge_base` + `badge_power`, so `power_entity` and `power_bg` come from that table above and
-are not repeated here.
+power drawn. Nothing but the dark circle shows while the plug is off.
 
-The two follow different things on purpose. The circle is the plug — dark when it is cut,
-colored as soon as it feeds the machine. The icon is the machine: it stays crossed out until a
-cycle actually runs, so a green circle with a crossed-out drum reads "powered, doing nothing".
+It owns no colors of its own. It is `[badge_status, badge_power, badge_countdown]`, and all it
+adds is the phase: one `cycle_phase` variable that resolves to `run`, `pause` or `idle`, and a
+handful of variables that hand the matching look back to `badge_status`. So `power_entity`,
+`power_bg`, `countdown_bg` and `countdown_active` come from the two tables above and are not
+repeated here.
+
+The circle and the icon follow different things on purpose. The circle is the plug — dark when
+it is cut, colored as soon as it feeds the machine. The icon is the machine: it stays crossed
+out until a cycle actually runs, so a green circle with a crossed-out drum reads "powered,
+doing nothing".
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -421,10 +448,26 @@ cycle actually runs, so a green circle with a crossed-out drum reads "powered, d
 | `gradient_off` / `_idle` / `_run` / `_pause` | dark / green / teal / orange | Background per look |
 | `border_off` / `_idle` / `_run` / `_pause` | `3px solid …` | Left border per look |
 | `glow_off` / `_idle` / `_run` / `_pause` | `grayscale…` / `drop-shadow…` | Icon `filter` per look |
-| `icon_on` / `icon_off` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon while a cycle runs / any other time |
+| `icon_run` / `icon_idle` | `mdi:washing-machine` / `mdi:washing-machine-off` | Icon while a cycle runs / while the plug is live but nothing runs |
+| `icon_off` | `mdi:washing-machine-off` | Icon while the plug is cut |
 | `pulse_off` / `_idle` / `_run` / `_pause` | `none` / `none` / `badge-pulse 1.5s ease-in-out infinite` / `none` | Animation per look |
 | `pulse_from` / `pulse_to` | teal | The two glow colors of `badge-pulse` |
-| `countdown_bg` | `rgba(0, 105, 92, 0.9)` | Countdown pill background (`power_bg` defaults to green here) |
+
+> **Do not set the `*_on` variables here.** `gradient_on`, `border_on`, `glow_on`, `icon_on`
+> and `pulse_animation` are what this template *computes* from the phase and hands to
+> `badge_status`. A card that sets one of them wins the merge — silently, with no error — and
+> flattens the three live looks into one. Set `*_idle` / `*_run` / `*_pause` instead.
+>
+> Coming from an earlier version: `icon_on` used to be the running icon and `icon_off`
+> everything else. They are now `icon_run` and `icon_idle`. A card still passing `icon_on`
+> shows the running icon in every phase, drum never crossed out.
+
+An `unavailable` or `unknown` plug falls back to the off look, through a `default` state entry
+this template adds for itself. Two details of that look are worth knowing before you tune it:
+`badge_status` dims the whole circle to 90 % while it is off — same as the pump and the remote,
+it is the house style — and it also applies `opacity: 0.8` to the icon, on top of whatever
+`glow_off` does. That is why `glow_off` defaults to `opacity(0.75)` rather than the `0.6` you
+might expect: 0.75 × 0.8 is the 0.6 that actually lands.
 
 The defaults are the washing machine above, so it comes down to the three sensors — plus
 one line here, because that badge pulses as soon as its plug is live, the way the pump does:
@@ -445,9 +488,8 @@ variables:
   power_entity: sensor.lave_linge_power
 ```
 
-The countdown reads the completion time as an absolute timestamp and prints what is left:
-`45m`, then `1h30`. It only refreshes when one of the entities in `triggers_update` moves, so
-a machine that reports nothing for ten minutes shows a countdown ten minutes stale.
+Both pills only refresh when one of the four entities named in `triggers_update` moves, so a
+machine that reports nothing for ten minutes shows a countdown ten minutes stale.
 
 #### `badge_health`
 On/off badge that also watches the relay, bridge or gateway the device hangs off. While that

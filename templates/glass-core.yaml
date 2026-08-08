@@ -1097,79 +1097,20 @@
       }
     }
   },
-  "badge_appliance": {
-    "template": [
-      "badge_base",
-      "badge_power"
-    ],
+  "badge_countdown": {
     "variables": {
-      "state_entity": "",
       "finish_entity": "",
-      "power_entity": "",
-      "run_states": [
-        "run"
-      ],
-      "pause_states": [
-        "pause"
-      ],
-      "icon_on": "mdi:washing-machine",
-      "icon_off": "mdi:washing-machine-off",
-      "gradient_off": "linear-gradient(135deg, #424242, #616161)",
-      "gradient_idle": "linear-gradient(135deg, #43A047, #81C784)",
-      "gradient_run": "linear-gradient(135deg, #00897B, #4DB6AC)",
-      "gradient_pause": "linear-gradient(135deg, #F57C00, #FFB74D)",
-      "border_off": "3px solid #212121",
-      "border_idle": "3px solid #2E7D32",
-      "border_run": "3px solid #00695C",
-      "border_pause": "3px solid #E65100",
-      "glow_off": "grayscale(100%) opacity(0.6)",
-      "glow_idle": "drop-shadow(0 0 3px rgba(46, 125, 50, 0.5))",
-      "glow_run": "drop-shadow(0 0 5px rgba(0, 137, 123, 0.8))",
-      "glow_pause": "drop-shadow(0 0 5px rgba(245, 124, 0, 0.8))",
-      "pulse_off": "none",
-      "pulse_idle": "none",
-      "pulse_run": "badge-pulse 1.5s ease-in-out infinite",
-      "pulse_pause": "none",
-      "pulse_from": "rgba(0, 137, 123, 0.4)",
-      "pulse_to": "rgba(77, 182, 172, 0.7)",
-      "countdown_bg": "rgba(0, 105, 92, 0.9)",
-      "power_bg": "rgba(46, 125, 50, 0.85)"
+      "countdown_bg": "rgba(0,0,0,0.55)",
+      "countdown_active": true
     },
-    "show_name": false,
-    "show_state": false,
-    "show_icon": true,
-    "icon": "[[[\n  if (entity.state !== 'on') return variables.icon_off;\n  if (!variables.state_entity) return variables.icon_on;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  return (variables.run_states || []).includes(v) ? variables.icon_on : variables.icon_off;\n]]]",
-    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null, variables.state_entity,\n          variables.finish_entity, variables.power_entity].filter(Boolean);\n]]]",
+    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null,\n          variables.finish_entity].filter(Boolean);\n]]]",
     "custom_fields": {
-      "countdown": "[[[\n  if (entity.state !== 'on') return '';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return '';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]"
+      "countdown": "[[[\n  if (entity.state !== 'on') return '';\n  if (variables.countdown_active === false) return '';\n  if (!variables.finish_entity) return '';\n\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  if (isNaN(end)) return '';\n  const left = Math.max(0, Math.floor((end - Date.now()) / 60000));\n  if (left < 60) return `${left}m`;\n  const h = Math.floor(left / 60), m = left % 60;\n  return `${h}h${m > 0 ? m : ''}`;\n]]]"
     },
     "styles": {
       "card": [
         {
-          "--badge-pulse-from": "[[[ return variables.pulse_from ]]]"
-        },
-        {
-          "--badge-pulse-to": "[[[ return variables.pulse_to ]]]"
-        },
-        {
-          "background": "[[[\n  if (entity.state !== 'on') return variables.gradient_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.gradient_run;\n  if ((variables.pause_states || []).includes(v)) return variables.gradient_pause;\n  return variables.gradient_idle;\n]]]"
-        },
-        {
-          "border-left": "[[[\n  if (entity.state !== 'on') return variables.border_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.border_run;\n  if ((variables.pause_states || []).includes(v)) return variables.border_pause;\n  return variables.border_idle;\n]]]"
-        },
-        {
-          "animation": "[[[\n  if (entity.state !== 'on') return variables.pulse_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.pulse_run;\n  if ((variables.pause_states || []).includes(v)) return variables.pulse_pause;\n  return variables.pulse_idle;\n]]]"
-        }
-      ],
-      "icon": [
-        {
-          "color": "#FFFFFF"
-        },
-        {
-          "transition": "all 0.3s ease-in-out"
-        },
-        {
-          "filter": "[[[\n  if (entity.state !== 'on') return variables.glow_off;\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return variables.glow_run;\n  if ((variables.pause_states || []).includes(v)) return variables.glow_pause;\n  return variables.glow_idle;\n]]]"
+          "overflow": "visible"
         }
       ],
       "custom_fields": {
@@ -1187,7 +1128,7 @@
             "background": "[[[ return variables.countdown_bg ]]]"
           },
           {
-            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n\n  if (!(variables.run_states || []).includes(v) || !variables.finish_entity) return 'none';\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  return isNaN(end) ? 'none' : 'block';\n]]]"
+            "display": "[[[\n  if (entity.state !== 'on') return 'none';\n  if (variables.countdown_active === false) return 'none';\n  if (!variables.finish_entity) return 'none';\n\n  const end = new Date((states[variables.finish_entity] || {}).state).getTime();\n  return isNaN(end) ? 'none' : 'block';\n]]]"
           },
           {
             "border-radius": "8px"
@@ -1210,7 +1151,94 @@
           {
             "min-width": "0"
           }
-        ],
+        ]
+      }
+    }
+  },
+  "badge_appliance": {
+    "template": [
+      "badge_status",
+      "badge_power",
+      "badge_countdown"
+    ],
+    "variables": {
+      "state_entity": "",
+      "finish_entity": "",
+      "power_entity": "",
+      "run_states": [
+        "run"
+      ],
+      "pause_states": [
+        "pause"
+      ],
+      "icon_run": "mdi:washing-machine",
+      "icon_idle": "mdi:washing-machine-off",
+      "icon_off": "mdi:washing-machine-off",
+      "icon_color_off": "#FFFFFF",
+      "gradient_off": "linear-gradient(135deg, #424242, #616161)",
+      "gradient_idle": "linear-gradient(135deg, #43A047, #81C784)",
+      "gradient_run": "linear-gradient(135deg, #00897B, #4DB6AC)",
+      "gradient_pause": "linear-gradient(135deg, #F57C00, #FFB74D)",
+      "border_off": "3px solid #212121",
+      "border_idle": "3px solid #2E7D32",
+      "border_run": "3px solid #00695C",
+      "border_pause": "3px solid #E65100",
+      "glow_off": "grayscale(100%) opacity(0.75)",
+      "glow_idle": "drop-shadow(0 0 3px rgba(46, 125, 50, 0.5))",
+      "glow_run": "drop-shadow(0 0 5px rgba(0, 137, 123, 0.8))",
+      "glow_pause": "drop-shadow(0 0 5px rgba(245, 124, 0, 0.8))",
+      "pulse_off": "none",
+      "pulse_idle": "none",
+      "pulse_run": "badge-pulse 1.5s ease-in-out infinite",
+      "pulse_pause": "none",
+      "pulse_from": "rgba(0, 137, 123, 0.4)",
+      "pulse_to": "rgba(77, 182, 172, 0.7)",
+      "countdown_bg": "rgba(0, 105, 92, 0.9)",
+      "power_bg": "rgba(46, 125, 50, 0.85)",
+      "cycle_phase": "[[[\n  const s = variables.state_entity ? states[variables.state_entity] : null;\n  const v = s ? s.state : null;\n  if ((variables.run_states || []).includes(v)) return 'run';\n  if ((variables.pause_states || []).includes(v)) return 'pause';\n  return 'idle';\n]]]",
+      "gradient_on": "[[[\n  const p = variables.cycle_phase;\n  if (p === 'run') return variables.gradient_run;\n  if (p === 'pause') return variables.gradient_pause;\n  return variables.gradient_idle;\n]]]",
+      "border_on": "[[[\n  const p = variables.cycle_phase;\n  if (p === 'run') return variables.border_run;\n  if (p === 'pause') return variables.border_pause;\n  return variables.border_idle;\n]]]",
+      "glow_on": "[[[\n  const p = variables.cycle_phase;\n  if (p === 'run') return variables.glow_run;\n  if (p === 'pause') return variables.glow_pause;\n  return variables.glow_idle;\n]]]",
+      "pulse_animation": "[[[\n  const p = variables.cycle_phase;\n  if (p === 'run') return variables.pulse_run;\n  if (p === 'pause') return variables.pulse_pause;\n  return variables.pulse_idle;\n]]]",
+      "icon_on": "[[[\n  if (!variables.state_entity) return variables.icon_run;\n  return variables.cycle_phase === 'run' ? variables.icon_run : variables.icon_idle;\n]]]",
+      "countdown_active": "[[[\n  return variables.cycle_phase === 'run';\n]]]"
+    },
+    "triggers_update": "[[[\n  return [entity ? entity.entity_id : null, variables.state_entity,\n          variables.finish_entity, variables.power_entity].filter(Boolean);\n]]]",
+    "state": [
+      {
+        "operator": "default",
+        "icon": "[[[ return variables.icon_off ]]]",
+        "opacity": 0.9,
+        "styles": {
+          "card": [
+            {
+              "background": "[[[ return variables.gradient_off ]]]"
+            },
+            {
+              "border-left": "[[[ return variables.border_off ]]]"
+            }
+          ],
+          "icon": [
+            {
+              "color": "[[[ return variables.icon_color_off ]]]"
+            },
+            {
+              "opacity": 0.8
+            },
+            {
+              "filter": "[[[ return variables.glow_off ]]]"
+            }
+          ]
+        }
+      }
+    ],
+    "styles": {
+      "card": [
+        {
+          "animation": "[[[ return variables.pulse_off ]]]"
+        }
+      ],
+      "custom_fields": {
         "power_indicator": [
           {
             "right": "-6px"
