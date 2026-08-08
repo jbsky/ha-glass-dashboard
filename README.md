@@ -611,7 +611,7 @@ keeps the rack to a single row, two ways, and neither drops a battery:
 |---|---|
 | `grid` *(default)* | Wraps every `columns` cells — the rack pictured above |
 | `scroll` | One row of `cell_width` columns, swiped sideways; the row scrolls, the card does not grow |
-| `expand` | One row — the first `columns - 1` cells and a `+N` cell that unfolds the full grid |
+| `expand` | One row — the first `columns - 1` cells (never fewer than one) and a `+N` cell that unfolds the full grid |
 
 Neither is a truncation, because the rack is sorted by level: what stays in view is whatever is
 closest to dying, and the cells that scroll off or fold away are the ones at 90 %.
