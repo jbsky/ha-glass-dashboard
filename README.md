@@ -563,6 +563,9 @@ devices, while `x_battery_level_2` and `x_battery_state_2` are one.
 | `entities` | `[]` | Explicit list; empty means every battery found. A listed entity with no readable level is drawn grey with a `?` rather than dropped |
 | `exclude` | — | Regex matched against the entity id, dropped from the rack |
 | `columns` | `6` | Cells per row |
+| `layout` | `grid` | `grid` wraps, `scroll` keeps one swipeable row, `expand` folds to one row behind a `+N` cell |
+| `cell_width` | `48px` | Column width under `scroll`; ignored by the other two |
+| `storage_key` | — | Names the fold's memory under `expand`; two racks want two keys |
 | `sort` | `level` | `level` (lowest first), `name`, or `none` for the order given |
 | `low` / `warn` / `mid` | `15` / `30` / `60` | Severity thresholds, in percent |
 | `color_low` / `color_warn` | `#db4437` / `#ff9800` | Fill and border below each threshold |
@@ -598,10 +601,40 @@ variables:
     - sensor.thermometre_alexandre_battery
 ```
 
+#### One line instead of a table
+
+A rack that wraps every `columns` cells is what you want on a wall panel, and the last thing you
+want above the fold on a phone — twenty batteries push everything else off the screen. `layout`
+keeps the rack to a single row, two ways, and neither drops a battery:
+
+| `layout` | The rack becomes |
+|---|---|
+| `grid` *(default)* | Wraps every `columns` cells — the rack pictured above |
+| `scroll` | One row of `cell_width` columns, swiped sideways; the row scrolls, the card does not grow |
+| `expand` | One row — the first `columns - 1` cells and a `+N` cell that unfolds the full grid |
+
+Neither is a truncation, because the rack is sorted by level: what stays in view is whatever is
+closest to dying, and the cells that scroll off or fold away are the ones at 90 %.
+
+```yaml
+type: custom:button-card
+template: battery_rack
+variables:
+  layout: expand
+  columns: 6
+```
+
+`expand` folds with a checkbox and a sibling selector rather than with a script, so the fold is
+CSS and costs no re-render. Only *remembering* it is JavaScript: the open state goes to
+`localStorage` under `storage_key`, which is also what keeps two racks on the same dashboard from
+sharing one fold — give them two keys, or leave both unnamed and they open together. The rack
+re-reads that key on every redraw, so a battery reporting in behind your back does not fold the
+card back up under your finger.
+
 One thing to know if you serve Home Assistant through a hardened reverse proxy: a cell opens
 its dialog from an inline handler, so a `Content-Security-Policy` whose `script-src` drops
-`'unsafe-inline'` leaves the rack drawn exactly as above but the cells inert. Home Assistant
-itself sends no such policy.
+`'unsafe-inline'` leaves the rack drawn exactly as above but the cells inert — and the `expand`
+fold still opens and closes, it just forgets. Home Assistant itself sends no such policy.
 
 ### Remote Buttons
 
