@@ -626,13 +626,23 @@ variables:
   columns: 6
 ```
 
-The `+N` cell toggles a class from an inline handler, the same way a battery cell opens its
-dialog. That is not a stylistic choice: **no native form control works inside a `button-card`**.
-Its action handler calls `preventDefault()` on the card's click, which cancels the activation
-behaviour of anything inside it — a checkbox there never flips, not even through `.click()`, so
-the tidy `:checked ~ …` fold silently does nothing. Worth knowing before reaching for a
-checkbox, a radio or a `<details>` in any button-card template. Keyboard support needs the same
-treatment, hence the explicit `Enter` / `Space` handler on the toggle.
+The `+N` cell toggles a class from an inline `pointerup` handler, and so does a battery cell to
+open its dialog. Both details are forced by `button-card`, and both are worth knowing before
+writing any template of your own:
+
+- **No native form control works inside a `button-card`.** Its action handler calls
+  `preventDefault()` on the card's click, which cancels the activation behaviour of everything
+  inside it — a checkbox there never flips, not even through `.click()`, so the tidy
+  `:checked ~ …` fold silently does nothing. Same for a `<label for>`, a radio, a `<details>`.
+- **`onclick` is dead on a touchscreen.** The same handler cancels `touchend`, and a cancelled
+  `touchend` means the browser never synthesises a click at all. A tap delivers
+  `pointerdown, touchstart, pointerup, touchend` and no `click`, so anything bound to `onclick`
+  works with a mouse and does nothing under a finger — including in the companion app.
+
+Hence `pointerup`, which arrives from both a finger and a mouse, and *only* `pointerup`: also
+binding `onclick` would fire everything twice on desktop, and a time window to tell the two
+apart would swallow genuine second taps. Keyboard support gets its own `Enter` / `Space`
+handler for the same reason the rest exists.
 
 The open state is kept in `localStorage` under `storage_key`, which is also what keeps two racks
 on the same dashboard from sharing one fold — give them two keys, or leave both unnamed and they
