@@ -36,13 +36,45 @@ weather-dynamic:
   ha-card-border-color: "rgba(255, 255, 255, 0.08)"
   ha-card-box-shadow: "none"
 
-  # Weather-reactive, sun-aware background.
+  # Static fallback, painted natively. This is what shows while the dynamic one
+  # below is not there yet -- and it is the whole point of this key.
   #
-  # Straight port of the old `card-mod-view`: same selector, same CSS. UIX
-  # appends its style node to the light DOM of <hui-view>, i.e. inside
-  # hui-root's shadow root -- exactly where hui-view and its layout element
-  # live (hui-view.ts does this.appendChild(layoutElement), so hui-panel-view
-  # is a sibling in that same tree and matches too).
+  # `lovelace-background` is an ordinary theme key: it travels inside
+  # hass.themes with the rest of the theme and applyThemesOnElement puts it on
+  # <hui-view-container> as soon as the theme is applied. No plugin, no
+  # websocket, nothing to wait for. <hui-view-background> reads it
+  # (getComputedStyle -> --lovelace-background) and, because the value contains
+  # `fixed`, flips itself to `position: fixed` + `background-attachment: scroll`
+  # -- the workaround Home Assistant ships for Safari iOS, which we inherit
+  # instead of fighting it.
+  lovelace-background: "center / cover no-repeat fixed url('/local/backgrounds/weather/partlycloudy.jpg')"
+
+  # Weather-reactive, sun-aware background, layered over that fallback.
+  #
+  # It overrides the same custom property rather than painting <hui-view>:
+  # <hui-view-container> is the common ancestor of <hui-view> and
+  # <hui-view-background>, custom properties inherit downwards, so the native
+  # element picks the new value up and repaints -- keeping the positioning it
+  # already armed from the static value above.
+  #
+  # `!important` is not decoration: applyThemesOnElement writes the static
+  # value as an INLINE style on <hui-view-container>, and an inline declaration
+  # beats a stylesheet rule unless that rule is important.
+  #
+  # Painting <hui-view> directly (what the card-mod version did, and what this
+  # theme did until now) is what made the background flaky. That rule only
+  # exists once UIX has attached its style node to the light DOM of <hui-view>
+  # *and* the server has answered the render_template subscription this Jinja
+  # implies -- on a heavy `sections` view, measured at 3 to 5 times the delay of
+  # a masonry one. Until then the view had no background at all, so a slow
+  # phone shows the flat theme background. It also put
+  # `background-attachment: fixed` on a tall scrolling element full of
+  # `backdrop-filter` layers, the exact combination HA works around above.
+  #
+  # UIX still appends its style node to the light DOM of <hui-view>, i.e. inside
+  # hui-root's shadow root. A <style> applies to its whole shadow tree wherever
+  # it sits in it, so a rule on `hui-view-container` -- an ancestor -- matches
+  # just as well as one on hui-view itself.
   #
   # Do NOT use `uix-drawer` + --uix-view-background here. UIX reads those
   # variables with getComputedStyle(ha-drawer), but a theme declared per view
@@ -51,11 +83,8 @@ weather-dynamic:
   # downwards only, so the drawer never sees them and nothing renders, with no
   # error anywhere. `uix-drawer` only works when the theme is selected globally
   # in the user profile.
-  #
-  # No need to neutralise --lovelace-background either: <hui-view-background>
-  # is position: absolute with z-index: -1, so it already sits behind hui-view.
   uix-view: |
-    hui-view, hui-panel-view {
+    hui-view-container {
       {% set v = 2 %}
       {% set sun = states('sun.sun') %}
       {% set weather = states('weather.home') %}
@@ -82,6 +111,5 @@ weather-dynamic:
       {% else %}
         {% set img = weather_images.get(weather, 'partlycloudy.jpg') %}
       {% endif %}
-      background: center / cover no-repeat fixed url("/local/backgrounds/weather/{{ img }}?v={{ v }}") !important;
-      min-height: 100vh;
+      --lovelace-background: center / cover no-repeat fixed url("/local/backgrounds/weather/{{ img }}?v={{ v }}") !important;
     }

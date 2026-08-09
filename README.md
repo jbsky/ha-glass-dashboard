@@ -163,7 +163,7 @@ Or use [decluttering-card](https://github.com/custom-cards/decluttering-card) fo
 
 ## Requirements
 
-- [UIX](https://github.com/Lint-Free-Technology/uix) (required for the weather-reactive background)
+- [UIX](https://github.com/Lint-Free-Technology/uix) (required to make the background follow the weather — without it you get a fixed photo, not a flat background)
 - [button-card](https://github.com/custom-cards/button-card) (required for templates)
 - [mini-graph-card](https://github.com/kalkih/mini-graph-card) (optional, for `field_graph`)
 - [scheduler-card](https://github.com/nielsfaber/scheduler-card) (optional, for scheduling view)
@@ -175,8 +175,10 @@ Or use [decluttering-card](https://github.com/custom-cards/decluttering-card) fo
 > Uninstall card-mod, drop its `extra_module_url` entry from `configuration.yaml`, restart,
 > then install UIX from HACS and add the integration in **Settings > Devices & Services**.
 > The glass effect itself no longer needs any plugin — it now uses native theme variables.
-> UIX is only required for the weather background; without it the cards still look right,
-> they just sit on the plain Home Assistant background.
+> UIX is only required for the background to *follow the weather*. The theme also ships a
+> plain `lovelace-background` key, so without UIX — or during the second or two it takes UIX
+> to attach its style node and get its template rendered by the server — the view still sits
+> on a photo rather than on a flat colour.
 
 ---
 
@@ -624,17 +626,23 @@ variables:
   columns: 6
 ```
 
-`expand` folds with a checkbox and a sibling selector rather than with a script, so the fold is
-CSS and costs no re-render. Only *remembering* it is JavaScript: the open state goes to
-`localStorage` under `storage_key`, which is also what keeps two racks on the same dashboard from
-sharing one fold — give them two keys, or leave both unnamed and they open together. The rack
-re-reads that key on every redraw, so a battery reporting in behind your back does not fold the
-card back up under your finger.
+The `+N` cell toggles a class from an inline handler, the same way a battery cell opens its
+dialog. That is not a stylistic choice: **no native form control works inside a `button-card`**.
+Its action handler calls `preventDefault()` on the card's click, which cancels the activation
+behaviour of anything inside it — a checkbox there never flips, not even through `.click()`, so
+the tidy `:checked ~ …` fold silently does nothing. Worth knowing before reaching for a
+checkbox, a radio or a `<details>` in any button-card template. Keyboard support needs the same
+treatment, hence the explicit `Enter` / `Space` handler on the toggle.
 
-One thing to know if you serve Home Assistant through a hardened reverse proxy: a cell opens
-its dialog from an inline handler, so a `Content-Security-Policy` whose `script-src` drops
-`'unsafe-inline'` leaves the rack drawn exactly as above but the cells inert — and the `expand`
-fold still opens and closes, it just forgets. Home Assistant itself sends no such policy.
+The open state is kept in `localStorage` under `storage_key`, which is also what keeps two racks
+on the same dashboard from sharing one fold — give them two keys, or leave both unnamed and they
+open together. The rack re-reads that key on every redraw, so a battery reporting in behind your
+back cannot fold the card back up under your finger.
+
+One thing to know if you serve Home Assistant through a hardened reverse proxy: cells and the
+`+N` toggle both act from inline handlers, so a `Content-Security-Policy` whose `script-src`
+drops `'unsafe-inline'` leaves the rack drawn exactly as above but inert — cells will not open
+their dialog and the fold will not open. Home Assistant itself sends no such policy.
 
 ### Remote Buttons
 
