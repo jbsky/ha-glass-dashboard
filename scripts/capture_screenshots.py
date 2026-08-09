@@ -101,9 +101,13 @@ SSH_RELAY = os.environ.get("HA_SSH_RELAY", "")
 SSH_TARGET = os.environ.get("HA_SSH_TARGET", "192.168.4.50:80")
 RELAY_PORT = int(os.environ.get("HA_RELAY_PORT", "18126"))
 
+# Addressed by view *path*, never by index: reordering the views in the UI renumbers them, and
+# an index that has moved does not fail — it quietly shoots the wrong view under the right name.
+# That is how weather-desktop.png came back holding the remote panel.
 DEFAULT_VIEWS = (
-    "/lovelace/0:home,/lovelace/1:weather,/lovelace/2:remote,"
-    "/lovelace/3:programmation,/lovelace/4:proxmox,/lovelace/5:routeurs,/lovelace/6:nas"
+    "/lovelace/home:home,/lovelace/telecommande:remote,/lovelace/meteo:weather,"
+    "/lovelace/programmation:programmation,/lovelace/proxmox:proxmox,"
+    "/lovelace/routeurs:routeurs,/lovelace/nas:nas"
 )
 VIEWS = [tuple(v.split(":", 1)) for v in os.environ.get("HA_VIEWS", DEFAULT_VIEWS).split(",")]
 
@@ -116,70 +120,70 @@ MOBILE = {"width": 390, "height": 844}
 # icons only — and is the one entry that a layout change can silently invalidate. "badge"
 # takes an `entity` instead of a locator, for the identical circles in the view header.
 COMPONENTS = [
-    {"name": "glass_climate", "view": "/lovelace/0", "pick": "largest",
+    {"name": "glass_climate", "view": "/lovelace/home", "pick": "largest",
      "locator": 'button-card:has-text("Office AC")'},
 
-    {"name": "glass_container_sensors", "view": "/lovelace/0", "pick": "largest",
+    {"name": "glass_container_sensors", "view": "/lovelace/home", "pick": "largest",
      "locator": 'hui-card:has(button-card:has-text("Escalier"))'},
 
-    {"name": "state_on_off_on", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "state_on_off_on", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Escalier")) button-card:has-text("WC")',
      "setup": {"entity": LAMP_ENTITY, "want": "on"}},
 
-    {"name": "state_on_off_off", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "state_on_off_off", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Escalier")) button-card:has-text("WC")',
      "setup": {"entity": LAMP_ENTITY, "want": "off"}},
 
-    {"name": "state_on_off", "view": "/lovelace/0", "pick": "index", "index": 2,
+    {"name": "state_on_off", "view": "/lovelace/home", "pick": "index", "index": 2,
      "locator": "hui-card"},
 
     # un seul aller-retour du volet cuisine : l'animation d'abord, l'etat stabilise ensuite
-    {"name": "glass_cover_moving", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "glass_cover_moving", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Cuisin")',
      "setup": {"entity": COVER_ENTITY, "want": 60, "while_moving": True},
      "frames": 12, "interval_ms": 600},
 
-    {"name": "glass_cover", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "glass_cover", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Cuisin")',
      "setup": {"entity": COVER_ENTITY, "want": 60}},
 
-    {"name": "glass_cover_closed", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "glass_cover_closed", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'button-card:has-text("Porte fen")'},
 
-    {"name": "glass_garage", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "glass_garage", "view": "/lovelace/home", "pick": "smallest",
      "locator": 'hui-card:has(button-card:has-text("Baie vitr")) button-card:has-text("Garage")'},
 
-    {"name": "field_templates", "view": "/lovelace/0", "pick": "largest",
+    {"name": "field_templates", "view": "/lovelace/home", "pick": "largest",
      "locator": 'button-card:has-text("Météo")'},
 
-    {"name": "field_templates_pair", "view": "/lovelace/0", "pick": "largest",
+    {"name": "field_templates_pair", "view": "/lovelace/home", "pick": "largest",
      "locator": 'hui-card:has-text("Météo")'},
 
     # la seule carte de la vue qui contienne une grille de piles : pas de texte a matcher
-    {"name": "battery_rack", "view": "/lovelace/0", "pick": "smallest",
+    {"name": "battery_rack", "view": "/lovelace/home", "pick": "smallest",
      "locator": "hui-card:has(.batt-grid)"},
 
-    {"name": "badge_row", "view": "/lovelace/0", "pick": "largest",
+    {"name": "badge_row", "view": "/lovelace/home", "pick": "largest",
      "locator": "hui-view-badges"},
 
     # Les badges sont des pastilles de 36 px identiques : rien dans leur balisage ne les
     # distingue, on les retrouve donc par l'entite de leur configuration. Leurs indicateurs
     # (compte a rebours, puissance) sont dessines *hors* de la pastille — d'ou "badge", qui
     # clippe l'union du badge et de tout ce que sa button-card dessine.
-    {"name": "badge_doorbell", "view": "/lovelace/0", "pick": "badge",
+    {"name": "badge_doorbell", "view": "/lovelace/home", "pick": "badge",
      "entity": "switch.sonnette"},
 
-    {"name": "badge_remote", "view": "/lovelace/0", "pick": "badge",
+    {"name": "badge_remote", "view": "/lovelace/home", "pick": "badge",
      "entity": "remote.rm4pro"},
 
-    {"name": "badge_washer", "view": "/lovelace/0", "pick": "badge",
+    {"name": "badge_washer", "view": "/lovelace/home", "pick": "badge",
      "entity": "switch.lave_linge_2"},
 
-    {"name": "badge_pump", "view": "/lovelace/0", "pick": "badge",
+    {"name": "badge_pump", "view": "/lovelace/home", "pick": "badge",
      "entity": "switch.pompe_forage"},
 
     # le panneau remote n'est pas une carte mais une pile de grilles : on clippe leur union
-    {"name": "remote_view", "view": "/lovelace/2", "pick": "union", "pad": 10,
+    {"name": "remote_view", "view": "/lovelace/telecommande", "pick": "union", "pad": 10,
      "locator": "hui-grid-card"},
 ]
 

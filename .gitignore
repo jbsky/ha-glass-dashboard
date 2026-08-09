@@ -1,1 +1,5 @@
 __pycache__/
+
+# intermediaires de capture : seuls les JPEG reduits sont commites (cf. docs/SCREENSHOTS.md)
+docs/screenshots/*-desktop.png
+docs/screenshots/*-mobile.png
