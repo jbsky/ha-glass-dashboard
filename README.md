@@ -537,11 +537,12 @@ drops out. It needs no card beyond `button-card`.
 
 ![battery_rack](https://raw.githubusercontent.com/jbsky/ha-glass-dashboard/main/docs/screenshots/components/battery_rack.png)
 
-The fill height is the charge and its color the severity band; a cell at or below `low` pulses,
-which is what puts the three dying plant sensors above at the top of the rack. The number sits
-inside the cell, the name under it — the friendly name minus its trailing "Battery"/"Batterie"
-(`name_strip`), clamped to two lines. Clicking a cell opens *that* sensor's more-info dialog,
-so nothing is lost against a list of bars.
+The fill height is the charge and its color the severity band, and a cell at or below `low`
+pulses. Sorted lowest first, the rack opens on whatever is closest to dying — a plant sensor at
+2 % sits at the front, pulsing red, long before you would have gone looking for it. The number
+sits inside the cell, the name under it — the friendly name minus its trailing
+"Battery"/"Batterie" (`name_strip`), clamped to two lines. Tapping a cell opens *that* sensor's
+more-info dialog, so nothing is lost against a list of bars.
 
 **Not every device measures its battery**, and the ones that don't are exactly the ones a
 percentage-only rack hides. Three readings are accepted, in that order of preference:
@@ -552,10 +553,10 @@ percentage-only rack hides. Three readings are accepted, in that order of prefer
 | a word — `low`, `medium`, `high`… (`text_levels`) | the mapped percentage | dashed outline, the word inside |
 | a binary `battery low` (`binary_sensor`, `device_class: battery`) | `low` when on, `ok` when off | dashed outline, `low` / `ok` inside |
 
-A dashed outline therefore means *deduced, not measured* — the four freezer and fridge
-thermometers above only ever say `high` or `medium`. Devices commonly publish two of these at
-once, so the rack keeps **one cell per device**, best reading first: the plant sensor above
-reports both `2 %` and `low` and is drawn once, from the number. A `*_battery_state` holding a
+A dashed outline therefore means *deduced, not measured* — a freezer thermometer that only ever
+says `high` or `medium` gets one. Devices commonly publish two of these at once, so the rack
+keeps **one cell per device**, best reading first: a plant sensor reporting both `2 %` and `low`
+is drawn once, from the number. A `*_battery_state` holding a
 charging status (`discharging`, `Not Charging`) is not a level and is ignored, and the `_2`
 Home Assistant appends to a duplicate name is kept — `x_battery` and `x_battery_2` are two
 devices, while `x_battery_level_2` and `x_battery_state_2` are one.
@@ -611,7 +612,7 @@ keeps the rack to a single row, two ways, and neither drops a battery:
 
 | `layout` | The rack becomes |
 |---|---|
-| `grid` *(default)* | Wraps every `columns` cells — the rack pictured above |
+| `grid` *(default)* | Wraps every `columns` cells, as many rows as it takes |
 | `scroll` | One row of `cell_width` columns, swiped sideways; the row scrolls, the card does not grow |
 | `expand` | One row — the first `columns - 1` cells (never fewer than one) and a `+N` cell that unfolds the full grid |
 
@@ -651,8 +652,8 @@ back cannot fold the card back up under your finger.
 
 One thing to know if you serve Home Assistant through a hardened reverse proxy: cells and the
 `+N` toggle both act from inline handlers, so a `Content-Security-Policy` whose `script-src`
-drops `'unsafe-inline'` leaves the rack drawn exactly as above but inert — cells will not open
-their dialog and the fold will not open. Home Assistant itself sends no such policy.
+drops `'unsafe-inline'` leaves the rack drawn correctly but inert — cells will not open their
+dialog and the fold will not open. Home Assistant itself sends no such policy.
 
 ### Remote Buttons
 
