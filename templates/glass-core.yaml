@@ -230,7 +230,7 @@
           "type": "custom:button-card",
           "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
           "entity": "[[[\n    return variables.climate_entity;\n]]]\n",
-          "name": "[[[\n      return states[variables.climate_entity].attributes.friendly_name;\n]]]\n",
+          "name": "[[[\n      return states[variables.climate_entity]?.attributes?.friendly_name ?? '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -287,7 +287,7 @@
           "type": "custom:button-card",
           "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
           "entity": "[[[\n    return variables.climate_entity;\n]]]\n",
-          "name": "[[[\n    switch(states[variables.climate_entity].state){\n      case \"heat\": \n      return \"chauffage - \" + states[variables.climate_entity].attributes.current_temperature;\n      break;\n      case \"cool\":\n          return \"climatisation - \"+ states[variables.climate_entity].attributes.current_temperature;\n      break;\n      case \"off\": \n          return \"éteint - \" + states[variables.climate_entity].attributes.current_temperature;\n      break;\n    }\n    return states[variables.climate_entity].state;\n\n]]]\n",
+          "name": "[[[\n    if (!states[variables.climate_entity]) return '';\n    switch(states[variables.climate_entity]?.state){\n      case \"heat\": \n      return \"chauffage - \" + states[variables.climate_entity]?.attributes?.current_temperature;\n      break;\n      case \"cool\":\n          return \"climatisation - \"+ states[variables.climate_entity]?.attributes?.current_temperature;\n      break;\n      case \"off\": \n          return \"éteint - \" + states[variables.climate_entity]?.attributes?.current_temperature;\n      break;\n    }\n    return states[variables.climate_entity]?.state;\n\n]]]\n",
           "styles": {
             "card": [
               {
@@ -334,7 +334,7 @@
               "entity_id": "[[[\n    return variables.climate_entity;\n]]]\n"
             },
             "service_data": {
-              "temperature": "[[[\n      let max_temp = states[variables.climate_entity].attributes.max_temp;\n      let currentTemp = states[variables.climate_entity].attributes.temperature;\n      let step = states[variables.climate_entity].attributes.target_temp_step;\n      let newTemp = currentTemp + step;\n\n      if (newTemp <= max_temp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
+              "temperature": "[[[\n      if (!states[variables.climate_entity]) return null;\n      let max_temp = states[variables.climate_entity]?.attributes?.max_temp;\n      let currentTemp = states[variables.climate_entity]?.attributes?.temperature;\n      let step = states[variables.climate_entity]?.attributes?.target_temp_step;\n      let newTemp = currentTemp + step;\n\n      if (newTemp <= max_temp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
             }
           },
           "show_name": false,
@@ -362,7 +362,7 @@
           "show_value": false,
           "show_icon": false,
           "triggers_update": "[[[\n    return variables.climate_entity;\n]]]\n",
-          "name": "[[[ return states[variables.climate_entity].attributes.temperature ; ]]]\n",
+          "name": "[[[ return states[variables.climate_entity]?.attributes?.temperature ?? '' ; ]]]\n",
           "type": "custom:button-card",
           "entity": "[[[\n        return variables.climate_entity;\n]]]\n",
           "styles": {
@@ -439,7 +439,7 @@
               "entity_id": "[[[\n    return variables.climate_entity;\n]]]\n"
             },
             "service_data": {
-              "temperature": "[[[\n      let min_temp = states[variables.climate_entity].attributes.min_temp;\n      let currentTemp = states[variables.climate_entity].attributes.temperature;\n      let step = states[variables.climate_entity].attributes.target_temp_step;\n      let newTemp = currentTemp - step;\n\n      if (min_temp <= newTemp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
+              "temperature": "[[[\n      if (!states[variables.climate_entity]) return null;\n      let min_temp = states[variables.climate_entity]?.attributes?.min_temp;\n      let currentTemp = states[variables.climate_entity]?.attributes?.temperature;\n      let step = states[variables.climate_entity]?.attributes?.target_temp_step;\n      let newTemp = currentTemp - step;\n\n      if (min_temp <= newTemp) {\n          return newTemp;\n      }\n      return currentTemp;\n]]]\n"
             }
           },
           "show_name": false,
@@ -456,9 +456,9 @@
           "template": "icon_tiny",
           "color": "#039be5",
           "triggers_update": "[[[\n    return variables.secondary_sensors[0];\n]]]\n",
-          "icon": "[[[\n  if (states[variables.secondary_sensors[0]].state == 'night')  return \"mdi:fan\"\n  if (states[variables.secondary_sensors[0]].state == 'level1') return \"mdi:fan-off\"\n  if (states[variables.secondary_sensors[0]].state == 'level2') return \"mdi:fan-speed-1\"\n  if (states[variables.secondary_sensors[0]].state == 'level3') return \"mdi:fan-speed-2\"\n  if (states[variables.secondary_sensors[0]].state == 'level4') return \"mdi:fan-speed-3\"\n  if (states[variables.secondary_sensors[0]].state == 'level5') return \"mdi:fan-plus\"\n  return \"mdi:fan-question\" // Icône par défaut si aucune condition n'est satisfaite\n]]]\n",
+          "icon": "[[[\n  if (states[variables.secondary_sensors[0]]?.state == 'night')  return \"mdi:fan\"\n  if (states[variables.secondary_sensors[0]]?.state == 'level1') return \"mdi:fan-off\"\n  if (states[variables.secondary_sensors[0]]?.state == 'level2') return \"mdi:fan-speed-1\"\n  if (states[variables.secondary_sensors[0]]?.state == 'level3') return \"mdi:fan-speed-2\"\n  if (states[variables.secondary_sensors[0]]?.state == 'level4') return \"mdi:fan-speed-3\"\n  if (states[variables.secondary_sensors[0]]?.state == 'level5') return \"mdi:fan-plus\"\n  return \"mdi:fan-question\" // Icône par défaut si aucune condition n'est satisfaite\n]]]\n",
           "entity": "[[[ \n  if (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]]) \n    return variables.secondary_sensors[0];\n  return ''; \n]]]\n",
-          "value": "[[[\n  return states[variables.secondary_sensors[0]].state;\n]]]\n",
+          "value": "[[[\n  return states[variables.secondary_sensors[0]]?.state ?? '';\n]]]\n",
           "state": [
             {
               "value": "night",
@@ -491,7 +491,7 @@
         "card": {
           "type": "custom:button-card",
           "template": "icon_tiny",
-          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state) \n        return variables.secondary_sensors[1];\n      return ''; \n]]]\n"
+          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]]?.state) \n        return variables.secondary_sensors[1];\n      return ''; \n]]]\n"
         }
       },
       "sensor2": {
@@ -502,7 +502,7 @@
           "show_icon": false,
           "show_state": true,
           "show_name": false,
-          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state) \n        return variables.secondary_sensors[2];\n      return ''; \n]]]\n",
+          "entity": "[[[ \n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]]?.state) \n        return variables.secondary_sensors[2];\n      return ''; \n]]]\n",
           "styles": {
             "state": [
               {
@@ -1518,8 +1518,8 @@
       "sensor0": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state) {\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[0]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state)\n        return variables.secondary_sensors[0];\n      return '';\n]]]\n",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]]?.state) {\n  if (states[variables.secondary_sensors[0]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[0]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[0]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[0]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[0]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]]?.state)\n        return variables.secondary_sensors[0];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1535,8 +1535,8 @@
       "sensor1": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state) {\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[1]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return '';\n]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]].state)\n        return variables.secondary_sensors[1];\n      return '';\n]]]\n",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]]?.state) {\n  if (states[variables.secondary_sensors[1]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[1]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[1]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[1]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[1]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n} return '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 1 && states[variables.secondary_sensors[1]]?.state)\n        return variables.secondary_sensors[1];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1552,8 +1552,8 @@
       "sensor2": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state) {\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[2]].attributes.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]].state)\n        return variables.secondary_sensors[2];\n      return '';\n]]]\n",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]]?.state) {\n  if (states[variables.secondary_sensors[2]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[2]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[2]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[2]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[2]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 2 && states[variables.secondary_sensors[2]]?.state)\n        return variables.secondary_sensors[2];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1569,8 +1569,8 @@
       "sensor3": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]].state) {\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[3]].attributes.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]].state)\n        return variables.secondary_sensors[3];\n      return '';\n]]]\n",
+          "template": "[[[\nif (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]]?.state) {\n  if (states[variables.secondary_sensors[3]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[3]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[3]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[3]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[3]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n  }\n\nreturn '';\n]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 3 && states[variables.secondary_sensors[3]]?.state)\n        return variables.secondary_sensors[3];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1586,8 +1586,8 @@
       "sensor4": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]].state) {\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[4]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]].state)\n        return variables.secondary_sensors[4];\n      return '';\n]]]\n",
+          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]]?.state) {\n  if (states[variables.secondary_sensors[4]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[4]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[4]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[4]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[4]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 4 && states[variables.secondary_sensors[4]]?.state)\n        return variables.secondary_sensors[4];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1603,8 +1603,8 @@
       "sensor5": {
         "card": {
           "type": "custom:button-card",
-          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]].state) {\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[5]].attributes.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
-          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]].state)\n        return variables.secondary_sensors[5];\n      return '';\n]]]\n",
+          "template": "[[[ if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]]?.state) {\n  if (states[variables.secondary_sensors[5]]?.attributes?.device_class == \"battery\")\n    return 'battery_level';\n  if (states[variables.secondary_sensors[5]]?.attributes?.device_class == \"humidity\")\n    return 'humidity_template';\n  if (states[variables.secondary_sensors[5]]?.attributes?.device_class == \"temperature\")\n    return 'temperature_template';\n  if (states[variables.secondary_sensors[5]]?.attributes?.device_class == \"door\")\n    return 'door_template';\n  if (states[variables.secondary_sensors[5]]?.attributes?.device_class == \"opening\")\n    return 'door_template';\n} return ''; ]]]\n",
+          "entity": "[[[\n      if (variables.secondary_sensors && variables.secondary_sensors.length > 5 && states[variables.secondary_sensors[5]]?.state)\n        return variables.secondary_sensors[5];\n      return '';\n]]]\n",
           "styles": {
             "card": [
               {
@@ -1701,20 +1701,20 @@
         "card": {
           "template": "title_template",
           "type": "custom:button-card",
-          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 0 && states[variables.sensors[0]].state)\n    return variables.sensors[0];\n  return '';\n]]]",
-          "name": "[[[\n  if( variables.sensors[0] === undefined)\n    return ''\n  if (variables.sensors.length < 2 && variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]].state) {\n  if (variables.name_sensors[0] && variables.sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.sensors[0] && variables.secondary_sensors[0])\n    return states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  if (variables.name_sensors[0] )\n    return variables.name_sensors[0] ;\n  if (variables.secondary_sensors[0])\n    return states[variables.secondary_sensors[0]].state + states[variables.secondary_sensors[0]].attributes.unit_of_measurement ;\n  }\nelse\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement;\n  return states[variables.sensors[0]].state + states[variables.sensors[0]].attributes.unit_of_measurement ;\n]]]",
+          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 0 && states[variables.sensors[0]]?.state)\n    return variables.sensors[0];\n  return '';\n]]]",
+          "name": "[[[\n  if( variables.sensors[0] === undefined)\n    return ''\n  if (!states[variables.sensors[0]])\n    return (variables.name_sensors && variables.name_sensors[0]) || '';\n  if (variables.sensors.length < 2 && variables.secondary_sensors && variables.secondary_sensors.length > 0 && states[variables.secondary_sensors[0]]?.state) {\n  if (variables.name_sensors[0] && variables.sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]]?.state + states[variables.sensors[0]]?.attributes?.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]]?.state + states[variables.secondary_sensors[0]]?.attributes?.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]]?.state + states[variables.sensors[0]]?.attributes?.unit_of_measurement ;\n  if (variables.name_sensors[0] && variables.secondary_sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.secondary_sensors[0]]?.state + states[variables.secondary_sensors[0]]?.attributes?.unit_of_measurement ;\n  if (variables.sensors[0] && variables.secondary_sensors[0])\n    return states[variables.sensors[0]]?.state + states[variables.sensors[0]]?.attributes?.unit_of_measurement  + ' / ' + states[variables.secondary_sensors[0]]?.state + states[variables.secondary_sensors[0]]?.attributes?.unit_of_measurement ;\n  if (variables.name_sensors[0] )\n    return variables.name_sensors[0] ;\n  if (variables.secondary_sensors[0])\n    return states[variables.secondary_sensors[0]]?.state + states[variables.secondary_sensors[0]]?.attributes?.unit_of_measurement ;\n  }\nelse\n  if (variables.name_sensors[0] && variables.sensors[0])\n    return variables.name_sensors[0] + ' ' + states[variables.sensors[0]]?.state + states[variables.sensors[0]]?.attributes?.unit_of_measurement;\n  return states[variables.sensors[0]]?.state + states[variables.sensors[0]]?.attributes?.unit_of_measurement ;\n]]]",
           "styles": {
             "name": [
               {
                 "text-align": "left"
               },
               {
-                "color": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"#E0E0E0\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]].state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"#FFC507\" : \"#E0E0E0\";\n]]]\n"
+                "color": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"#E0E0E0\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]]?.state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"#FFC507\" : \"#E0E0E0\";\n]]]\n"
               }
             ],
             "card": [
               {
-                "background": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"transparent\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]].state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"linear-gradient(90deg, rgba(100,100,100,1.0) 0%, rgba(28,28,28,0.0) 100%)\" : \"\";\n]]]\n"
+                "background": "[[[ \n  var active = false;\n  if (!variables.commands)\n     return \"transparent\";\n  for (var i=0; i<variables.commands.length; i++) {\n    if (states[variables.commands[i]]?.state === 'on') {\n      active = true;\n      break;\n    }\n  }\n  return active ? \"linear-gradient(90deg, rgba(100,100,100,1.0) 0%, rgba(28,28,28,0.0) 100%)\" : \"\";\n]]]\n"
               }
             ]
           }
@@ -1724,8 +1724,8 @@
         "card": {
           "template": "title_template",
           "type": "custom:button-card",
-          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 1 && states[variables.sensors[1]].state)\n    return variables.sensors[1];\n  return '';\n]]]",
-          "name": "[[[\n  if( variables.sensors[1] === undefined)\n    return ''\n  if (variables.name_sensors[1] && variables.sensors[1])\n    return variables.name_sensors[1] + ' ' + states[variables.sensors[1]].state + states[variables.sensors[1]].attributes.unit_of_measurement  ;\n  return states[variables.sensors[1]].state + states[variables.sensors[1]].attributes.unit_of_measurement;\n]]]",
+          "entity": "[[[\n  if (variables.sensors && variables.sensors.length > 1 && states[variables.sensors[1]]?.state)\n    return variables.sensors[1];\n  return '';\n]]]",
+          "name": "[[[\n  if( variables.sensors[1] === undefined)\n    return ''\n  if (!states[variables.sensors[1]])\n    return (variables.name_sensors && variables.name_sensors[1]) || '';\n  if (variables.name_sensors[1] && variables.sensors[1])\n    return variables.name_sensors[1] + ' ' + states[variables.sensors[1]]?.state + states[variables.sensors[1]]?.attributes?.unit_of_measurement  ;\n  return states[variables.sensors[1]]?.state + states[variables.sensors[1]]?.attributes?.unit_of_measurement;\n]]]",
           "styles": {
             "name": [
               {
